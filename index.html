@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>지우쌤의 컴활 2급 필기 문제풀이</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <button type="button" id="btn-access-code" class="btn-access-code">코드 입력</button>
+  <button type="button" id="btn-settings" class="btn-settings" aria-label="설정">⚙️</button>
+
+  <div id="settings-panel" class="settings-panel hidden" role="dialog" aria-label="설정">
+    <h3>설정</h3>
+    <p class="settings-label">글자 크기</p>
+    <div class="font-size-group" role="radiogroup" aria-label="글자 크기">
+      <button type="button" class="font-size-btn" data-size="small">작게</button>
+      <button type="button" class="font-size-btn active" data-size="normal">보통</button>
+      <button type="button" class="font-size-btn" data-size="large">크게</button>
+    </div>
+    <button type="button" id="btn-settings-close" class="btn btn-secondary btn-sm">닫기</button>
+  </div>
+  <div id="settings-backdrop" class="settings-backdrop hidden"></div>
+
+  <div id="lock-toast" class="lock-toast hidden" role="status">코드를 입력하면 잠금이 해제됩니다</div>
+
+  <div id="app">
+    <!-- 메인 메뉴 -->
+    <section id="menu-screen" class="screen active">
+      <header class="menu-header">
+        <h1>지우쌤의 컴활 2급 필기 문제풀이</h1>
+        <p class="menu-sub">상시 · 정기 기출문제 연습</p>
+      </header>
+
+      <div class="menu-section">
+        <h2 class="section-title">상시 기출문제</h2>
+        <div class="round-grid" id="sangsi-grid"></div>
+      </div>
+
+      <div class="menu-section">
+        <h2 class="section-title">정기 기출문제</h2>
+        <div class="round-grid" id="jeonggi-grid"></div>
+      </div>
+
+      <div id="mode-panel" class="mode-panel">
+        <p class="mode-panel-title" id="mode-panel-title">회차를 선택해 주세요</p>
+        <div id="resume-banner" class="resume-banner hidden">
+          <p id="resume-text"></p>
+          <button type="button" id="btn-resume" class="btn btn-accent btn-lg">이어서 풀기</button>
+        </div>
+        <p class="mode-label">풀이 모드 선택</p>
+        <div class="mode-buttons">
+          <button type="button" class="btn btn-mode" data-mode="normal">일반 풀이</button>
+          <button type="button" class="btn btn-mode" data-mode="exam">시험 모드</button>
+          <button type="button" class="btn btn-mode" data-mode="random">랜덤 풀이</button>
+          <button type="button" class="btn btn-mode btn-mode-note" data-mode="wrongnote">오답노트</button>
+        </div>
+        <button type="button" id="btn-new-start" class="btn btn-secondary btn-lg hidden">처음부터 풀기</button>
+      </div>
+    </section>
+
+    <!-- 오답노트 비어 있음 -->
+    <section id="wrongnote-empty-screen" class="screen">
+      <div class="card empty-card">
+        <p class="empty-emoji">🎉</p>
+        <h2>틀린 문제가 없습니다 🎉</h2>
+        <p class="subtitle">오답노트에 저장된 문제가 없어요</p>
+        <button type="button" id="btn-empty-back" class="btn btn-primary btn-lg">메인으로</button>
+      </div>
+    </section>
+
+    <!-- 퀴즈 -->
+    <section id="quiz-screen" class="screen">
+      <header class="quiz-top">
+        <div class="quiz-top-row">
+          <button type="button" id="btn-back-menu" class="btn-text">← 메뉴</button>
+          <span id="exam-badge" class="exam-badge hidden">시험 모드</span>
+          <span id="exam-timer" class="exam-timer hidden">40:00</span>
+        </div>
+        <p class="quiz-round-label" id="quiz-round-label"></p>
+      </header>
+
+      <nav class="q-nav" id="q-nav" aria-label="문제 번호"></nav>
+
+      <main class="quiz-main">
+        <div class="question-meta">
+          <div class="question-meta-left">
+            <span class="q-number" id="q-number">문제 1</span>
+            <span class="subject-tag" id="subject-tag">1과목</span>
+          </div>
+          <button type="button" id="btn-review-done" class="btn-review-done hidden">✅ 검토 완료</button>
+        </div>
+        <p class="question-text" id="question-text"></p>
+        <div id="question-image-wrap" class="question-image-wrap hidden" aria-hidden="true"></div>
+
+        <div class="options" id="options" role="radiogroup" aria-label="선택지"></div>
+
+        <div id="feedback-area" class="feedback-area hidden">
+          <button type="button" id="btn-explain" class="btn btn-explain" disabled>📖 해설 보기</button>
+          <div id="explain-panel" class="explain-panel hidden">
+            <div class="explain-block">
+              <h4>지우쌤 해설</h4>
+              <p id="explanation-text"></p>
+            </div>
+            <div class="explain-block">
+              <h4>합격포인트</h4>
+              <p id="point-text"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-actions">
+          <button type="button" id="btn-prev" class="btn btn-nav">← 이전</button>
+          <button type="button" id="btn-next" class="btn btn-nav btn-nav-primary">다음 →</button>
+          <button type="button" id="btn-finish" class="btn btn-nav btn-nav-submit">제출하기</button>
+        </div>
+      </main>
+    </section>
+
+    <!-- 결과 -->
+    <section id="result-screen" class="screen">
+      <div class="result-card">
+        <h2 class="result-title">풀이 완료!</h2>
+        <p class="result-score-line">점수: <strong id="result-score">0</strong>점 / 100점</p>
+        <p class="result-passfail" id="result-passfail">합격</p>
+        <div class="result-criteria">
+          <p class="criteria-heading">컴활 2급 합격 기준</p>
+          <ul>
+            <li>1과목, 2과목 각각 40점 이상</li>
+            <li>전 과목 평균 60점 이상</li>
+            <li>두 조건 모두 충족 시 합격</li>
+          </ul>
+        </div>
+        <p id="result-time" class="result-time hidden"></p>
+        <button type="button" id="btn-save-wrongnote" class="btn btn-accent btn-lg hidden">틀린 문제 오답노트에 저장</button>
+        <button type="button" id="btn-menu" class="btn btn-primary btn-lg">메인으로 돌아가기</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- 정답/오답 -->
+  <div id="modal-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-box" id="modal-box">
+      <div class="modal-icon" id="modal-icon" aria-hidden="true"></div>
+      <h3 id="modal-title" class="modal-title">정답입니다!</h3>
+      <p id="modal-desc" class="modal-desc"></p>
+      <button type="button" id="modal-confirm" class="btn btn-primary">확인</button>
+    </div>
+  </div>
+
+  <!-- 코드 입력 -->
+  <div id="code-modal-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-box code-modal-box">
+      <h3 class="modal-title">코드 입력</h3>
+      <p class="modal-desc">Pro 코드를 입력하면 2~5회가 해제됩니다.</p>
+      <input type="text" id="code-input" class="code-input" placeholder="코드 입력" autocomplete="off" maxlength="12" />
+      <p id="code-error" class="code-error hidden">유효하지 않은 코드입니다</p>
+      <div class="confirm-actions">
+        <button type="button" id="code-cancel" class="btn btn-secondary">취소</button>
+        <button type="button" id="code-submit" class="btn btn-primary">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 제출 확인 -->
+  <div id="confirm-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-box confirm-box">
+      <h3 class="modal-title">제출 확인</h3>
+      <p class="modal-desc">지금까지 푼 문제만 채점하고 종료할까요?</p>
+      <div class="confirm-actions">
+        <button type="button" id="confirm-cancel" class="btn btn-secondary">취소</button>
+        <button type="button" id="confirm-ok" class="btn btn-primary">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
