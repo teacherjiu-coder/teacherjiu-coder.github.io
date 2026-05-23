@@ -4,7 +4,7 @@ const OPTION_LABELS = ["①", "②", "③", "④"];
 const IMG_STYLE = "max-width:100%; height:auto; margin:10px 0; border-radius:8px; display:block;";
 
 const LS = {
-  pro: "comhwal_pro_unlocked",
+  pro: "isPro",
   fontSize: "comhwal_font_size",
   progress: (round) => `comhwal_progress_sangsi_${round}_normal`,
   wrongNote: "comhwal_wrong_note",
@@ -57,7 +57,12 @@ function showScreen(name) {
 }
 
 function isProUnlocked() {
-  if (localStorage.getItem(LS.pro) === "1") return true;
+  if (localStorage.getItem(LS.pro) === "true") return true;
+  if (localStorage.getItem("comhwal_pro_unlocked") === "1") {
+    unlockPro();
+    localStorage.removeItem("comhwal_pro_unlocked");
+    return true;
+  }
   if (localStorage.getItem("comhwal_coupon_ok") === "1") {
     unlockPro();
     localStorage.removeItem("comhwal_coupon_ok");
@@ -67,7 +72,7 @@ function isProUnlocked() {
 }
 
 function unlockPro() {
-  localStorage.setItem(LS.pro, "1");
+  localStorage.setItem(LS.pro, "true");
 }
 
 function isRoundUnlocked(type, num) {
@@ -86,11 +91,11 @@ function showLockToast() {
 function updateAccessUI() {
   const btn = $("#btn-access-code");
   if (isProUnlocked()) {
-    btn.textContent = "🔓 Pro";
+    btn.textContent = "🏅 Pro";
     btn.classList.add("pro-badge");
     btn.setAttribute("aria-label", "Pro 이용 중");
   } else {
-    btn.textContent = "코드 입력";
+    btn.textContent = "🔑 코드 입력";
     btn.classList.remove("pro-badge");
     btn.setAttribute("aria-label", "코드 입력");
   }
@@ -684,6 +689,8 @@ function renderQuiz() {
 
   $("#btn-prev").disabled = idx === 0;
   $("#btn-next").disabled = idx >= total - 1;
+  $("#btn-finish").classList.toggle("hidden", session.isWrongNote);
+  $(".quiz-actions").classList.toggle("quiz-actions-two", session.isWrongNote);
 
   saveProgress();
 }
@@ -811,8 +818,15 @@ function showResult() {
     : sc.totalScore.toFixed(1).replace(/\.0$/, "");
 
   $("#result-score").textContent = scoreText;
-  $("#result-passfail").textContent = sc.passed ? "합격" : "불합격";
-  $("#result-passfail").className = `result-passfail ${sc.passed ? "pass" : "fail"}`;
+
+  if (session.mode === "exam") {
+    const examPassed = sc.totalScore >= 60;
+    $("#result-passfail").textContent = examPassed ? "합격! 🎉" : "불합격 😢";
+    $("#result-passfail").className = `result-passfail ${examPassed ? "pass" : "fail"}`;
+  } else {
+    $("#result-passfail").textContent = sc.passed ? "합격" : "불합격";
+    $("#result-passfail").className = `result-passfail ${sc.passed ? "pass" : "fail"}`;
+  }
 
   const timeEl = $("#result-time");
   if (session.mode === "exam" && session.examElapsedSec != null) {

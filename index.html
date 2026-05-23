@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <button type="button" id="btn-access-code" class="btn-access-code">코드 입력</button>
+  <button type="button" id="btn-access-code" class="btn-access-code">🔑 코드 입력</button>
   <button type="button" id="btn-settings" class="btn-settings" aria-label="설정">⚙️</button>
 
   <div id="settings-panel" class="settings-panel hidden" role="dialog" aria-label="설정">
@@ -25,7 +25,7 @@
   </div>
   <div id="settings-backdrop" class="settings-backdrop hidden"></div>
 
-  <div id="lock-toast" class="lock-toast hidden" role="status">코드를 입력하면 잠금이 해제됩니다</div>
+  <div id="lock-toast" class="lock-toast hidden" role="status">코드를 입력하면 이용 가능합니다</div>
 
   <div id="app">
     <!-- 메인 메뉴 -->
@@ -157,7 +157,7 @@
       <h3 class="modal-title">코드 입력</h3>
       <p class="modal-desc">Pro 코드를 입력하면 2~5회가 해제됩니다.</p>
       <input type="text" id="code-input" class="code-input" placeholder="코드 입력" autocomplete="off" maxlength="12" />
-      <p id="code-error" class="code-error hidden">유효하지 않은 코드입니다</p>
+      <p id="code-error" class="code-error hidden">올바르지 않은 코드입니다</p>
       <div class="confirm-actions">
         <button type="button" id="code-cancel" class="btn btn-secondary">취소</button>
         <button type="button" id="code-submit" class="btn btn-primary">확인</button>
