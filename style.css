@@ -398,6 +398,94 @@ body {
   padding: 1rem 0 1.25rem;
 }
 
+.grade-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.grade-card {
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.15rem 1.25rem;
+  box-shadow: var(--shadow);
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.12s;
+}
+
+.grade-card:not(.grade-card-disabled):hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.grade-card:not(.grade-card-disabled):active {
+  transform: scale(0.99);
+}
+
+.grade-card-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: #f8fafc;
+}
+
+.grade-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.grade-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.grade-soon-badge {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: #e2e8f0;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+}
+
+.grade-card-meta {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.grade-card-meta li {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.grade-meta-note {
+  font-size: 0.82rem;
+  color: #94a3b8;
+}
+
+.round-select-top {
+  margin-bottom: 0.75rem;
+}
+
+.grade-round-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-top: 0.35rem;
+  padding-left: 0.5rem;
+}
+
 .menu-section {
   background: var(--surface);
   border-radius: var(--radius-lg);
@@ -489,6 +577,114 @@ body {
   padding: 1.25rem;
   box-shadow: var(--shadow);
   margin-top: 0.5rem;
+}
+
+.patchnotes-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 1.15rem 1.25rem;
+  margin-top: 1rem;
+  margin-bottom: 0.85rem;
+  box-shadow: var(--shadow);
+}
+
+.support-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 1.2rem 1.25rem 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.support-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text);
+  margin-bottom: 0.85rem;
+}
+
+.support-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+.support-body p {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.support-account {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.85rem 1rem;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--primary-light);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.12s;
+}
+
+.support-account:hover {
+  background: #bfdbfe;
+}
+
+.support-account:active {
+  transform: scale(0.99);
+}
+
+.support-account-text {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
+.support-account-hint {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.patchnotes-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.patchnotes-list li {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text);
+  padding-left: 0.85rem;
+  border-left: 3px solid var(--primary-light);
+}
+
+.patchnotes-date {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-right: 0.35rem;
+}
+
+.patchnotes-footer {
+  margin-top: 0.9rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
 }
 
 .mode-panel-title {

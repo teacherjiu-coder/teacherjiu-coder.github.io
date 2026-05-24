@@ -6,30 +6,49 @@ const IMG_STYLE = "max-width:100%; height:auto; margin:10px 0; border-radius:8px
 const LS = {
   pro: "isPro",
   fontSize: "comhwal_font_size",
-  progress: (round) => `comhwal_progress_sangsi_${round}_normal`,
+  progress: (grade, type, round) => `comhwal_progress_${grade}_${type}_${round}_normal`,
   wrongNote: "comhwal_wrong_note",
   selectedRound: "comhwal_selected_round",
+  selectedGrade: "comhwal_selected_grade",
 };
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 
-/** 이용 가능 회차 → 문제 JSON 파일 */
-const AVAILABLE_ROUNDS = {
-  sangsi: {
-    1: "questions.json",
-    2: "questions_sangsi_2.json",
-    3: "questions_sangsi_3.json",
-    4: "questions_sangsi_4.json",
-    5: "questions_sangsi_5.json",
-  },
+/** 급수별 회차 수 · 이용 가능 회차 (파일명: questions_{급}ss|gi_{회}.json) */
+const GRADE_CONFIG = {
+  1: { label: "컴활 1급", sangsiCount: 5, jeonggiCount: 5 },
+  2: { label: "컴활 2급", sangsiCount: 5, jeonggiCount: 10 },
 };
 
-const questionPools = { sangsi: {}, jeonggi: {} };
+const AVAILABLE_ROUND_NUMS = {
+  2: { sangsi: [1, 2, 3, 4, 5], jeonggi: [1, 2, 3, 4, 5] },
+  1: { sangsi: [], jeonggi: [1, 2] },
+};
+
+function roundFileName(grade, type, num) {
+  const code = type === "sangsi" ? "ss" : "gi";
+  return `questions_${grade}${code}_${num}.json`;
+}
+
+function hasAnyRoundAvailable(grade) {
+  const rounds = AVAILABLE_ROUND_NUMS[grade];
+  if (!rounds) return false;
+  return rounds.sangsi.length > 0 || rounds.jeonggi.length > 0;
+}
+
+function getRoundFile(grade, type, num) {
+  if (!isRoundAvailable(grade, type, num)) return null;
+  return roundFileName(grade, type, num);
+}
+
+const questionPools = { 1: { sangsi: {}, jeonggi: {} }, 2: { sangsi: {}, jeonggi: {} } };
+let currentGrade = null;
 let audioCtx = null;
 let timerInterval = null;
 
 const session = {
+  grade: null,
   mode: null,
   roundType: null,
   roundNum: null,
@@ -54,6 +73,7 @@ function showScreen(name) {
   Object.values(screens).forEach((el) => el.classList.remove("active"));
   screens[name].classList.add("active");
   if (name !== "quiz") document.body.classList.remove("is-exam-quiz");
+  $("#btn-access-code").classList.toggle("hidden", name !== "menu");
 }
 
 function isProUnlocked() {
@@ -76,7 +96,7 @@ function unlockPro() {
 }
 
 function isRoundUnlocked(type, num) {
-  if (type !== "sangsi") return false;
+  if (type !== "sangsi" && type !== "jeonggi") return false;
   if (num === 1) return true;
   return isProUnlocked();
 }
@@ -86,6 +106,40 @@ function showLockToast() {
   toast.classList.remove("hidden");
   clearTimeout(showLockToast._timer);
   showLockToast._timer = setTimeout(() => toast.classList.add("hidden"), 2500);
+}
+
+function showComingSoonToast() {
+  const toast = $("#coming-soon-toast");
+  toast.classList.remove("hidden");
+  clearTimeout(showComingSoonToast._timer);
+  showComingSoonToast._timer = setTimeout(() => toast.classList.add("hidden"), 2500);
+}
+
+function gradeLabel(grade) {
+  return GRADE_CONFIG[grade]?.label || `컴활 ${grade}급`;
+}
+
+function showGradeSelectView() {
+  $("#grade-select-view").classList.remove("hidden");
+  $("#round-select-view").classList.add("hidden");
+}
+
+function showRoundSelectView() {
+  $("#grade-select-view").classList.add("hidden");
+  $("#round-select-view").classList.remove("hidden");
+}
+
+function selectGrade(grade) {
+  if (!hasAnyRoundAvailable(grade)) {
+    showComingSoonToast();
+    return;
+  }
+  currentGrade = grade;
+  session.grade = grade;
+  localStorage.setItem(LS.selectedGrade, String(grade));
+  $("#grade-round-title").textContent = GRADE_CONFIG[grade].label;
+  buildRoundButtons(grade);
+  showRoundSelectView();
 }
 
 function updateAccessUI() {
@@ -99,7 +153,7 @@ function updateAccessUI() {
     btn.classList.remove("pro-badge");
     btn.setAttribute("aria-label", "코드 입력");
   }
-  buildRoundButtons();
+  if (currentGrade) buildRoundButtons(currentGrade);
 }
 
 function getAudioContext() {
@@ -166,12 +220,37 @@ function roundLabel(type, num) {
   return `${type === "sangsi" ? "상시" : "정기"} ${num}회`;
 }
 
-function isRoundAvailable(type, num) {
-  return !!AVAILABLE_ROUNDS[type]?.[num];
+function isRoundAvailable(grade, type, num) {
+  return AVAILABLE_ROUND_NUMS[grade]?.[type]?.includes(num) ?? false;
 }
 
-function getRoundQuestions(type, num) {
-  return questionPools[type]?.[num] || [];
+function getRoundQuestions(grade, type, num) {
+  return questionPools[grade]?.[type]?.[num] || [];
+}
+
+async function fetchRoundQuestions(grade, type, num) {
+  const cached = getRoundQuestions(grade, type, num);
+  if (cached.length > 0) return cached;
+
+  const file = getRoundFile(grade, type, num);
+  if (!file) throw new Error("문제 파일이 없습니다.");
+
+  const res = await fetch(file);
+  if (!res.ok) throw new Error(`${file}을 불러올 수 없습니다.`);
+  const qs = await res.json();
+  questionPools[grade][type][num] = qs.map((q) => ({
+    ...q,
+    roundKey: getRoundKey(grade, type, num),
+    roundNum: num,
+    roundType: type,
+    grade,
+  }));
+  return questionPools[grade][type][num];
+}
+
+async function ensureSangsiPoolLoaded(grade) {
+  const nums = AVAILABLE_ROUND_NUMS[grade]?.sangsi || [];
+  await Promise.all(nums.map((num) => fetchRoundQuestions(grade, "sangsi", num)));
 }
 
 function questionUid(q, roundKey) {
@@ -200,6 +279,7 @@ function addToWrongNote(q, roundKey) {
     roundKey,
     roundNum: q.roundNum,
     roundType: q.roundType || "sangsi",
+    grade: q.grade,
   });
   saveWrongNote(list);
 }
@@ -208,14 +288,16 @@ function removeFromWrongNote(uid) {
   saveWrongNote(loadWrongNote().filter((item) => item.uid !== uid));
 }
 
-function getProgressKey(roundNum) {
-  return LS.progress(roundNum);
+function getProgressKey(grade, type, roundNum) {
+  return LS.progress(grade, type, roundNum);
 }
 
 function saveProgress() {
   if (session.mode !== "normal" || session.isWrongNote) return;
+  const grade = session.grade || session.selectedRound?.grade;
+  if (!grade) return;
   localStorage.setItem(
-    getProgressKey(session.roundNum),
+    getProgressKey(grade, session.roundType, session.roundNum),
     JSON.stringify({
       roundNum: session.roundNum,
       currentIndex: session.currentIndex,
@@ -224,16 +306,18 @@ function saveProgress() {
   );
 }
 
-function loadProgressFor(roundNum) {
+function loadProgressFor(grade, type, roundNum) {
   try {
-    return JSON.parse(localStorage.getItem(getProgressKey(roundNum)));
+    return JSON.parse(localStorage.getItem(getProgressKey(grade, type, roundNum)));
   } catch {
     return null;
   }
 }
 
 function clearProgress() {
-  localStorage.removeItem(getProgressKey(session.roundNum));
+  const grade = session.grade || session.selectedRound?.grade;
+  if (!grade) return;
+  localStorage.removeItem(getProgressKey(grade, session.roundType, session.roundNum));
 }
 
 /** 지금까지 푼 문제만 채점 (100점 만점) */
@@ -261,6 +345,24 @@ function calcScores(questions, answers) {
   return { s1Score, s2Score, totalScore, passed };
 }
 
+/** 100점 만점 환산 점수 (세트 문항 수 기준) */
+function getScoreOn100(sc, questions) {
+  const maxScore = questions.length * 2.5;
+  if (maxScore <= 0) return 0;
+  return (sc.totalScore / maxScore) * 100;
+}
+
+/** 합격 판정: 100점 환산 60점 이상 (시험·일반·랜덤 공통) */
+function isResultPassed(sc, questions) {
+  return getScoreOn100(sc, questions) >= 60;
+}
+
+function renderPassFailResult(sc, questions) {
+  const passed = isResultPassed(sc, questions);
+  $("#result-passfail").textContent = passed ? "합격! 🎉" : "불합격 😢";
+  $("#result-passfail").className = `result-passfail ${passed ? "pass" : "fail"}`;
+}
+
 function formatTime(sec) {
   const m = Math.floor(sec / 60);
   const s = sec % 60;
@@ -271,17 +373,12 @@ function formatDuration(sec) {
   return `${Math.floor(sec / 60)}분 ${sec % 60}초`;
 }
 
-function getRoundKey(type, num) {
-  return `${type}_${num}`;
+function getRoundKey(grade, type, num) {
+  return `${grade}_${type}_${num}`;
 }
 
-function buildQuestionPools() {
-  questionPools.sangsi = {};
-  questionPools.jeonggi = {};
-}
-
-function getPoolByType(poolType) {
-  const pool = questionPools[poolType];
+function getPoolByType(grade, poolType) {
+  const pool = questionPools[grade]?.[poolType] || {};
   const computer = [];
   const spreadsheet = [];
 
@@ -295,8 +392,8 @@ function getPoolByType(poolType) {
   return { computer, spreadsheet };
 }
 
-function buildRandomQuestions(poolType) {
-  const { computer, spreadsheet } = getPoolByType(poolType);
+function buildRandomQuestions(grade, poolType) {
+  const { computer, spreadsheet } = getPoolByType(grade, poolType);
   if (computer.length === 0 && spreadsheet.length === 0) return null;
 
   const picked1 = pickRandom(computer, 20);
@@ -304,36 +401,25 @@ function buildRandomQuestions(poolType) {
   return shuffle([...picked1, ...picked2]);
 }
 
-async function loadQuestions() {
-  buildQuestionPools();
+function buildRoundButtons(grade) {
+  const config = GRADE_CONFIG[grade];
+  if (!config) return;
 
-  for (const [type, rounds] of Object.entries(AVAILABLE_ROUNDS)) {
-    for (const [numStr, file] of Object.entries(rounds)) {
-      const num = Number(numStr);
-      const res = await fetch(file);
-      if (!res.ok) throw new Error(`${file}을 불러올 수 없습니다.`);
-      const qs = await res.json();
-      questionPools[type][num] = qs.map((q) => ({
-        ...q,
-        roundKey: getRoundKey(type, num),
-        roundNum: num,
-        roundType: type,
-      }));
-    }
+  $("#sangsi-grid").innerHTML = "";
+  $("#jeonggi-grid").innerHTML = "";
+  for (let i = 1; i <= config.sangsiCount; i++) {
+    $("#sangsi-grid").appendChild(createRoundBtn(grade, "sangsi", i));
+  }
+  for (let i = 1; i <= config.jeonggiCount; i++) {
+    $("#jeonggi-grid").appendChild(createRoundBtn(grade, "jeonggi", i));
   }
 }
 
-function buildRoundButtons() {
-  $("#sangsi-grid").innerHTML = "";
-  $("#jeonggi-grid").innerHTML = "";
-  for (let i = 1; i <= 5; i++) $("#sangsi-grid").appendChild(createRoundBtn("sangsi", i));
-  for (let i = 1; i <= 10; i++) $("#jeonggi-grid").appendChild(createRoundBtn("jeonggi", i));
-}
-
-function createRoundBtn(type, num) {
-  const hasData = isRoundAvailable(type, num);
+function createRoundBtn(grade, type, num) {
+  const hasData = isRoundAvailable(grade, type, num);
   const btn = document.createElement("button");
   btn.type = "button";
+  btn.dataset.grade = String(grade);
   btn.dataset.type = type;
   btn.dataset.num = String(num);
 
@@ -344,39 +430,35 @@ function createRoundBtn(type, num) {
     return btn;
   }
 
-  if (type === "sangsi") {
-    const unlocked = isRoundUnlocked(type, num);
-    btn.className = `round-btn${unlocked ? "" : " locked"}`;
-    btn.innerHTML = unlocked
-      ? `<span class="round-num">${num}회</span>`
-      : `<span class="round-lock" aria-hidden="true">🔒</span><span class="round-num">${num}회</span>`;
-    btn.addEventListener("click", () => {
-      if (unlocked) selectRound(type, num);
-      else showLockToast();
-    });
-    return btn;
-  }
-
-  btn.className = "round-btn disabled";
-  btn.disabled = true;
-  btn.innerHTML = `<span class="round-num">${num}회</span><span class="round-soon">준비 중</span>`;
+  const unlocked = isRoundUnlocked(type, num);
+  btn.className = `round-btn${unlocked ? "" : " locked"}`;
+  btn.innerHTML = unlocked
+    ? `<span class="round-num">${num}회</span>`
+    : `<span class="round-lock" aria-hidden="true">🔒</span><span class="round-num">${num}회</span>`;
+  btn.addEventListener("click", () => {
+    if (unlocked) selectRound(grade, type, num);
+    else showLockToast();
+  });
   return btn;
 }
 
-function selectRound(type, num) {
-  if (type === "sangsi" && !isRoundUnlocked(type, num)) {
+function selectRound(grade, type, num) {
+  if (!isRoundUnlocked(type, num)) {
     showLockToast();
     return;
   }
-  session.selectedRound = { type, num };
-  localStorage.setItem(LS.selectedRound, JSON.stringify({ type, num }));
+  session.grade = grade;
+  session.selectedRound = { grade, type, num };
+  localStorage.setItem(LS.selectedRound, JSON.stringify({ grade, type, num }));
   $$(".round-btn").forEach((b) => b.classList.remove("selected"));
-  const sel = document.querySelector(`.round-btn[data-type="${type}"][data-num="${num}"]`);
+  const sel = document.querySelector(
+    `.round-btn[data-grade="${grade}"][data-type="${type}"][data-num="${num}"]`
+  );
   if (sel) sel.classList.add("selected");
 
-  $("#mode-panel-title").textContent = roundLabel(type, num);
+  $("#mode-panel-title").textContent = `${gradeLabel(grade)} · ${roundLabel(type, num)}`;
 
-  const progress = isRoundAvailable(type, num) ? loadProgressFor(num) : null;
+  const progress = isRoundAvailable(grade, type, num) ? loadProgressFor(grade, type, num) : null;
   const hasProgress = progress?.answers && Object.keys(progress.answers).length > 0;
 
   $("#resume-banner").classList.toggle("hidden", !hasProgress);
@@ -398,19 +480,28 @@ function modeLabel(mode) {
 
 function getSessionRoundKey() {
   if (session.isWrongNote) return "wrongnote";
-  if (session.mode === "random") return `random_${session.randomPoolType}`;
-  return getRoundKey(session.roundType, session.roundNum);
+  if (session.mode === "random") return `random_${session.grade || currentGrade}_${session.randomPoolType}`;
+  return getRoundKey(session.grade || session.selectedRound?.grade, session.roundType, session.roundNum);
 }
 
-function startSession(mode, resume = false) {
-  const { type, num } = session.selectedRound || {};
-  if (!isRoundAvailable(type, num)) return;
-  if (type === "sangsi" && !isRoundUnlocked(type, num)) {
+async function startSession(mode, resume = false) {
+  const { grade, type, num } = session.selectedRound || {};
+  if (!isRoundAvailable(grade, type, num)) return;
+  if (!isRoundUnlocked(type, num)) {
     showLockToast();
     return;
   }
 
+  let questions;
+  try {
+    questions = await fetchRoundQuestions(grade, type, num);
+  } catch {
+    alert("문제를 불러오지 못했습니다.\n로컬 서버로 실행해 주세요.");
+    return;
+  }
+
   session.mode = mode;
+  session.grade = grade;
   session.roundType = type;
   session.roundNum = num;
   session.isWrongNote = false;
@@ -418,10 +509,10 @@ function startSession(mode, resume = false) {
   session.answers = {};
   session.examStartedAt = null;
   session.examElapsedSec = null;
-  session.questions = [...getRoundQuestions(type, num)];
+  session.questions = [...questions];
 
   if (resume && mode === "normal") {
-    const saved = loadProgressFor(num);
+    const saved = loadProgressFor(grade, type, num);
     if (saved) {
       session.answers = saved.answers || {};
       session.currentIndex = Math.min(saved.currentIndex || 0, session.questions.length - 1);
@@ -436,14 +527,23 @@ function startSession(mode, resume = false) {
   beginQuiz();
 }
 
-function startRandomSession() {
-  const qs = buildRandomQuestions("sangsi");
+async function startRandomSession() {
+  const grade = currentGrade || session.grade || "2";
+  try {
+    await ensureSangsiPoolLoaded(grade);
+  } catch {
+    alert("문제를 불러오지 못했습니다.\n로컬 서버로 실행해 주세요.");
+    return;
+  }
+
+  const qs = buildRandomQuestions(grade, "sangsi");
   if (!qs || qs.length === 0) {
     alert("아직 준비된 문제가 없습니다.");
     return;
   }
 
   session.mode = "random";
+  session.grade = grade;
   session.randomPoolType = "sangsi";
   session.roundType = "sangsi";
   session.roundNum = null;
@@ -487,9 +587,9 @@ function beginQuiz() {
   if (session.isWrongNote) {
     label = `오답노트 · ${session.questions.length}문제`;
   } else if (session.mode === "random") {
-    label = `상시 전체 랜덤 · ${session.questions.length}문제`;
+    label = `${gradeLabel(session.grade || currentGrade)} 상시 전체 랜덤 · ${session.questions.length}문제`;
   } else {
-    label = `${roundLabel(session.roundType, session.roundNum)} · ${modeLabel(session.mode)}`;
+    label = `${gradeLabel(session.grade || currentGrade)} · ${roundLabel(session.roundType, session.roundNum)} · ${modeLabel(session.mode)}`;
   }
 
   $("#quiz-round-label").textContent = label;
@@ -602,7 +702,26 @@ function renderQuestionImage(q) {
 }
 
 function hasOptionImages(q) {
-  return Array.isArray(q.option_images) && q.option_images.length >= 4;
+  return (
+    Array.isArray(q.option_images) &&
+    q.option_images.length >= 4 &&
+    q.option_images.every((src) => src != null && src !== "")
+  );
+}
+
+function renderExplanationImage(q) {
+  const imgWrap = $("#explanation-image-wrap");
+  if (!imgWrap) return;
+
+  if (q.explanation_image) {
+    imgWrap.innerHTML = `<img src="${q.explanation_image}" alt="문제 ${q.id} 해설 참고 이미지" style="${IMG_STYLE}" onerror="this.style.display='none'">`;
+    imgWrap.classList.remove("hidden");
+    imgWrap.setAttribute("aria-hidden", "false");
+  } else {
+    imgWrap.innerHTML = "";
+    imgWrap.classList.add("hidden");
+    imgWrap.setAttribute("aria-hidden", "true");
+  }
 }
 
 /** 보기 렌더링 — option_images 시 이미지 보기 (4가지 모드 공통) */
@@ -665,7 +784,14 @@ function renderQuiz() {
   renderOptions(q, answered, ans, isExam);
 
   $("#explanation-text").textContent = q.explanation;
-  $("#point-text").textContent = q.point;
+  renderExplanationImage(q);
+  const grade = q.grade ?? session.grade ?? session.selectedRound?.grade;
+  const roundType = q.roundType || session.roundType;
+  const hidePoint = grade === 2 && roundType === "jeonggi";
+  const showPoint = !hidePoint && q.point != null && String(q.point).trim() !== "";
+  const pointBlock = $("#point-block");
+  if (pointBlock) pointBlock.classList.toggle("hidden", !showPoint);
+  if (showPoint) $("#point-text").textContent = q.point;
 
   const feedbackArea = $("#feedback-area");
   const explainBtn = $("#btn-explain");
@@ -819,10 +945,8 @@ function showResult() {
 
   $("#result-score").textContent = scoreText;
 
-  if (session.mode === "exam") {
-    const examPassed = sc.totalScore >= 60;
-    $("#result-passfail").textContent = examPassed ? "합격! 🎉" : "불합격 😢";
-    $("#result-passfail").className = `result-passfail ${examPassed ? "pass" : "fail"}`;
+  if (session.mode === "exam" || session.mode === "normal" || session.mode === "random") {
+    renderPassFailResult(sc, session.questions);
   } else {
     $("#result-passfail").textContent = sc.passed ? "합격" : "불합격";
     $("#result-passfail").className = `result-passfail ${sc.passed ? "pass" : "fail"}`;
@@ -850,18 +974,19 @@ function saveExamWrongToNoteAndGo() {
   session.questions.forEach((q) => {
     const a = session.answers[q.id];
     if (a?.answered && !a.correct) {
-      const roundKey = q.roundKey || getRoundKey(session.roundType, session.roundNum);
+      const grade = q.grade || session.grade || session.selectedRound?.grade;
+      const roundKey = q.roundKey || getRoundKey(grade, session.roundType, session.roundNum);
       addToWrongNote(q, roundKey);
     }
   });
   startWrongNoteSession();
 }
 
-function handleModeClick(mode) {
+async function handleModeClick(mode) {
   getAudioContext();
 
   if (mode === "random") {
-    startRandomSession();
+    await startRandomSession();
     return;
   }
 
@@ -870,12 +995,48 @@ function handleModeClick(mode) {
     return;
   }
 
-  if (!session.selectedRound || !isRoundAvailable(session.selectedRound.type, session.selectedRound.num)) {
+  const { grade, type, num } = session.selectedRound || {};
+  if (!grade || !isRoundAvailable(grade, type, num)) {
     alert("회차를 먼저 선택해 주세요.");
     return;
   }
 
-  startSession(mode, false);
+  await startSession(mode, false);
+}
+
+function sanitizeAccessCode(value) {
+  return String(value).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10);
+}
+
+function bindCodeInputMask() {
+  const input = $("#code-input");
+
+  input.addEventListener("input", () => {
+    const cleaned = sanitizeAccessCode(input.value);
+    if (input.value !== cleaned) input.value = cleaned;
+  });
+
+  input.addEventListener("paste", (e) => {
+    e.preventDefault();
+    const pasted = (e.clipboardData || window.clipboardData).getData("text");
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? input.value.length;
+    const merged = input.value.slice(0, start) + pasted + input.value.slice(end);
+    input.value = sanitizeAccessCode(merged);
+    input.setSelectionRange(input.value.length, input.value.length);
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      submitAccessCode();
+      return;
+    }
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const allowed = ["Backspace", "Delete", "Tab", "ArrowLeft", "ArrowRight", "Home", "End"];
+    if (allowed.includes(e.key)) return;
+    if (/^[a-zA-Z0-9]$/.test(e.key)) return;
+    e.preventDefault();
+  });
 }
 
 function openCodeModal() {
@@ -891,7 +1052,7 @@ function closeCodeModal() {
 }
 
 function submitAccessCode() {
-  const val = $("#code-input").value.trim().toUpperCase();
+  const val = sanitizeAccessCode($("#code-input").value);
   if (val === ACCESS_CODE.toUpperCase()) {
     unlockPro();
     $("#code-error").classList.add("hidden");
@@ -903,15 +1064,13 @@ function submitAccessCode() {
 }
 
 function initAccessCode() {
+  bindCodeInputMask();
   $("#btn-access-code").addEventListener("click", () => {
     if (isProUnlocked()) return;
     openCodeModal();
   });
   $("#code-submit").addEventListener("click", submitAccessCode);
   $("#code-cancel").addEventListener("click", closeCodeModal);
-  $("#code-input").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") submitAccessCode();
-  });
   $("#code-modal-overlay").addEventListener("click", (e) => {
     if (e.target === $("#code-modal-overlay")) closeCodeModal();
   });
@@ -934,29 +1093,75 @@ function closeSettings() {
   $("#settings-backdrop").classList.add("hidden");
 }
 
+function initSupportCard() {
+  const btn = $("#support-account-copy");
+  const textEl = $("#support-account-text");
+  if (!btn || !textEl) return;
+
+  const original = textEl.textContent;
+  const accountNumber = "3333-15-6953849";
+
+  btn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(accountNumber);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = accountNumber;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+
+    textEl.textContent = "✅ 복사됐어요!";
+    clearTimeout(initSupportCard._timer);
+    initSupportCard._timer = setTimeout(() => {
+      textEl.textContent = original;
+    }, 1500);
+  });
+}
+
 function initMenu() {
-  buildRoundButtons();
+  $$(".grade-card").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const grade = Number(btn.dataset.grade);
+      if (!hasAnyRoundAvailable(grade)) {
+        showComingSoonToast();
+        return;
+      }
+      selectGrade(grade);
+    });
+  });
+
+  $("#btn-back-grade").addEventListener("click", () => {
+    showGradeSelectView();
+  });
 
   $$(".btn-mode").forEach((btn) => {
     btn.addEventListener("click", () => handleModeClick(btn.dataset.mode));
   });
 
-  $("#btn-resume").addEventListener("click", () => {
+  $("#btn-resume").addEventListener("click", async () => {
     if (!session.selectedRound) return;
     getAudioContext();
-    startSession("normal", true);
+    await startSession("normal", true);
   });
 
-  $("#btn-new-start").addEventListener("click", () => {
+  $("#btn-new-start").addEventListener("click", async () => {
     if (!session.selectedRound) return;
-    const { type, num } = session.selectedRound;
-    localStorage.removeItem(getProgressKey(num));
-    selectRound(type, num);
+    const { grade, type, num } = session.selectedRound;
+    localStorage.removeItem(getProgressKey(grade, type, num));
+    selectRound(grade, type, num);
     getAudioContext();
-    startSession("normal", false);
+    await startSession("normal", false);
   });
 
-  $("#btn-empty-back").addEventListener("click", () => showScreen("menu"));
+  $("#btn-empty-back").addEventListener("click", () => {
+    showGradeSelectView();
+    showScreen("menu");
+  });
 }
 
 function initQuiz() {
@@ -969,6 +1174,7 @@ function initQuiz() {
     if (confirm("풀이를 중단하고 메인으로 돌아갈까요?")) {
       stopTimer();
       saveProgress();
+      showRoundSelectView();
       showScreen("menu");
     }
   });
@@ -985,8 +1191,10 @@ function initQuiz() {
 
 function initResult() {
   $("#btn-menu").addEventListener("click", () => {
+    showRoundSelectView();
     showScreen("menu");
-    if (session.selectedRound?.type) selectRound(session.selectedRound.type, session.selectedRound.num);
+    const { grade, type, num } = session.selectedRound || {};
+    if (grade && type && num) selectRound(grade, type, num);
   });
 
   $("#btn-save-wrongnote").addEventListener("click", saveExamWrongToNoteAndGo);
@@ -995,31 +1203,32 @@ function initResult() {
 async function init() {
   loadFontSize();
   initSettings();
-
-  try {
-    await loadQuestions();
-  } catch {
-    alert("questions.json을 불러오지 못했습니다.\n로컬 서버로 실행해 주세요.");
-    return;
-  }
-
   initAccessCode();
   initMenu();
+  initSupportCard();
   initQuiz();
   initResult();
 
   updateAccessUI();
   showScreen("menu");
+  showGradeSelectView();
 
   try {
     const saved = JSON.parse(localStorage.getItem(LS.selectedRound) || "null");
-    if (saved?.type === "sangsi" && isRoundUnlocked(saved.type, saved.num)) {
-      selectRound(saved.type, saved.num);
-    } else {
-      selectRound("sangsi", 1);
+    const savedGrade = Number(saved?.grade || localStorage.getItem(LS.selectedGrade));
+    if (
+      savedGrade &&
+      hasAnyRoundAvailable(savedGrade) &&
+      saved?.type &&
+      saved?.num &&
+      isRoundAvailable(savedGrade, saved.type, saved.num) &&
+      isRoundUnlocked(saved.type, saved.num)
+    ) {
+      selectGrade(savedGrade);
+      selectRound(savedGrade, saved.type, saved.num);
     }
   } catch {
-    selectRound("sangsi", 1);
+    showGradeSelectView();
   }
 }
 
