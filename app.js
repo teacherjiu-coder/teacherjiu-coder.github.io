@@ -714,7 +714,11 @@ function renderExplanationImage(q) {
   if (!imgWrap) return;
 
   if (q.explanation_image) {
-    imgWrap.innerHTML = `<img src="${q.explanation_image}" alt="문제 ${q.id} 해설 참고 이미지" style="${IMG_STYLE}" onerror="this.style.display='none'">`;
+    // 단일 문자열 또는 배열 모두 지원
+    const srcs = Array.isArray(q.explanation_image) ? q.explanation_image : [q.explanation_image];
+    imgWrap.innerHTML = srcs
+      .map((src, i) => `<img src="${src}" alt="문제 ${q.id} 해설 참고 이미지${srcs.length > 1 ? ` (${i+1})` : ''}" style="${IMG_STYLE}" onerror="this.style.display='none'">`)
+      .join("");
     imgWrap.classList.remove("hidden");
     imgWrap.setAttribute("aria-hidden", "false");
   } else {
@@ -738,7 +742,7 @@ function renderOptions(q, answered, ans, isExam) {
     btn.dataset.index = String(choice);
 
     if (useImages) {
-      btn.innerHTML = `<span class="option-label">${OPTION_LABELS[i]}</span><img src="${q.option_images[i]}" alt="보기 ${OPTION_LABELS[i]}" class="option-img" style="max-width:100%;height:auto;border-radius:6px;" onerror="this.style.display='none'">`;
+      btn.innerHTML = `<span class="option-label">${OPTION_LABELS[i]}</span><img src="${q.option_images[i]}" alt="보기 ${OPTION_LABELS[i]}" class="option-img" style="max-width:200px;height:auto;border-radius:6px;" onerror="this.style.display='none'">`;
     } else {
       btn.textContent = opt;
     }
@@ -1094,32 +1098,34 @@ function closeSettings() {
 }
 
 function initSupportCard() {
-  const btn = $("#support-account-copy");
-  const textEl = $("#support-account-text");
-  if (!btn || !textEl) return;
-
-  const original = textEl.textContent;
   const accountNumber = "3333-15-6953849";
 
-  btn.addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(accountNumber);
-    } catch {
-      const ta = document.createElement("textarea");
-      ta.value = accountNumber;
-      ta.style.position = "fixed";
-      ta.style.opacity = "0";
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-    }
+  $$(".support-account").forEach((btn) => {
+    const textEl = btn.querySelector(".support-account-text");
+    if (!textEl) return;
 
-    textEl.textContent = "✅ 복사됐어요!";
-    clearTimeout(initSupportCard._timer);
-    initSupportCard._timer = setTimeout(() => {
-      textEl.textContent = original;
-    }, 1500);
+    const original = textEl.textContent;
+
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(accountNumber);
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = accountNumber;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+
+      textEl.textContent = "✅ 복사됐어요!";
+      clearTimeout(textEl._copyTimer);
+      textEl._copyTimer = setTimeout(() => {
+        textEl.textContent = original;
+      }, 1500);
+    });
   });
 }
 

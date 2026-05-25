@@ -12,7 +12,8 @@
     "explanation": "모델링(Modeling): 디자인하기 전 뼈대를 세우는 작업으로 렌더링 전에 하는 작업 과정입니다.\n명암, 색상, 농도의 변화 등 3차원 질감을 넣어 사실감을 더하는 기법은 렌더링(Rendering)입니다.\n\n• 안티앨리어싱: 이미지 가장자리 계단 현상을 제거하여 경계선을 부드럽게 처리\n• 디더링: 표현할 수 없는 색상을 제한된 색상 조합으로 유사하게 만드는 작업\n• 모핑: 2개의 이미지를 부드럽게 연결하여 서서히 변화하는 기법 (영화에서 많이 사용)",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 2,
@@ -27,7 +28,8 @@
     "explanation": "IPTV: 초고속 인터넷망을 이용해 제공하는 양방향 TV 서비스\n\n• VoIP(Voice over Internet Protocol): IP 주소를 사용한 인터넷 음성 전화 서비스\n• IPv6: IPv4의 주소 부족을 해결하기 위해 만든 차세대 버전\n• TCP/IP: 서로 다른 시스템의 컴퓨터들이 통신하기 위한 프로토콜 집합",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 3,
@@ -42,7 +44,8 @@
     "explanation": "브리지(Bridge): 네트워크 장비로 데이터의 통신량을 조절하고 데이터를 재생성할 수 있는 장치입니다. 보안과는 관련이 없습니다.\n\n• 인증: 사용자를 식별하고 정당한 사용자인지 검증 후 허가되지 않은 사용자를 차단\n• 암호화: 도청이나 해킹을 방지하기 위해 지정된 수신자 외에는 내용을 알 수 없도록 처리\n• 방화벽: 무단 침입을 방어 (단, 내부 침입은 방어 불가)",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 4,
@@ -57,7 +60,8 @@
     "explanation": "정보 사회는 대중화 현상이 강화되는 것이 아니라 개인화가 강화되며, 개성과 자유를 경시하는 것이 아니라 존중하게 됩니다.",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 5,
@@ -72,7 +76,8 @@
     "explanation": "버스(Bus)형: 한 개의 통신회선에 여러 대의 단말장치가 연결된 형태로, 단말장치 추가/제거 및 기밀 보호가 어렵다는 단점이 있습니다.\n\n• 망(Mesh)형: 모든 지점이 서로 연결, 응답 빠르고 연결성 우수\n• 성(Star)형: 고장 발견 쉽고 유지보수·확장 용이, 중앙 노드 의존\n• 링(Ring)형: 양방향 데이터 전송 가능, 하나 고장 시 전체에 영향",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 6,
@@ -87,7 +92,8 @@
     "explanation": "운영체제(OS): 컴퓨터의 하드웨어를 제어하고 응용 소프트웨어를 위한 기반 환경을 제공하는 소프트웨어로, 사용자가 컴퓨터를 사용하기 위해 반드시 설치해야 하는 프로그램입니다. (예: Windows, Mac, Linux)\n\n• 컴파일러: C, Fortran 등 고급 언어로 작성된 원시 프로그램을 기계어로 번역\n• 유틸리티: 시스템을 편리하게 사용하도록 보조하는 프로그램\n• 라이브러리: 다른 프로그램들과 연결되기 위해 저장된 파일들의 모음",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 7,
@@ -102,7 +108,8 @@
     "explanation": "인터넷 옵션에서는 보안, 시작 페이지, 기록 설정 등 인터넷 설정을 전반적으로 관리하며, 멀티미디어 편집기는 선택할 수 없습니다.\n\n웹 브라우저: 웹 서버와 HTTP 프로토콜로 통신하여 사용자가 원하는 웹 페이지를 보여주는 프로그램 (예: Chrome, Firefox, Edge)",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 8,
@@ -117,7 +124,8 @@
     "explanation": "클라이언트/서버 방식과 동배간 처리 방식(Peer to Peer)은 '데이터 전송 방식'이 아닌 '네트워크 운영 방식'에 해당합니다.\n\n정보 전송 방식: 단방향(Simplex), 반이중(Half-Duplex), 전이중(Full-Duplex)\n네트워크 운영 방식: 중앙 집중 방식, 클라이언트/서버 방식, 동배간 처리 방식",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 9,
@@ -132,7 +140,8 @@
     "explanation": "처리할 데이터를 일정량 또는 일정 기간 모아두고 한 번에 처리하는 것은 일괄 처리 시스템(Batch Processing System)입니다.\n\n임베디드 시스템: 특정한 작업을 수행할 수 있도록 만들어진 컴퓨터 시스템 (예: 휴대폰의 MP3 기능, TV 제어 시스템)",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 10,
@@ -147,7 +156,8 @@
     "explanation": "유니코드(Unicode): 모든 문자를 2바이트(16비트)로 표현할 수 있는 국제 표준 코드입니다.\n\n• EBCDIC 코드: 표현 가능한 문자 수 최대 256자\n• 해밍코드: 에러 검출이나 교정이 가능한 코드\n• BCD, ASCII, EBCDIC 코드: Zone과 Digit로 구성된 코드",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 11,
@@ -162,7 +172,8 @@
     "explanation": "비트(Bit): 자료 표현의 최소 단위로, 8비트가 모여 1바이트(Byte)가 됩니다. 5비트가 아닙니다.\n\n• 니블(Nibble): 4비트\n• 바이트(Byte): 8비트\n• 워드(Word): CPU가 한 번에 수행 가능한 명령의 단위\n• 데이터베이스(DB): 자료의 집합",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 12,
@@ -177,7 +188,8 @@
     "explanation": "SATA(Serial ATA): 하드디스크를 위한 고속 인터페이스로, 이름에서 알 수 있듯이 직렬(Serial) 인터페이스 방식입니다. 병렬 인터페이스가 아닙니다.",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 13,
@@ -192,7 +204,8 @@
     "explanation": "RAM 접근 속도(응답 시간): 수치가 작을수록 더 빠르게 접근할 수 있어 좋습니다.\n\n나머지는 모두 수치가 클수록 좋습니다:\n• CPU 클럭 속도: 높을수록 처리 속도 빠름\n• 하드디스크 용량: 클수록 더 많은 저장 가능\n• 모뎀 전송 속도: 높을수록 빠른 전송",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 14,
@@ -207,7 +220,8 @@
     "explanation": "플래시 메모리는 트랙 단위가 아닌 블록 단위로 저장됩니다.\n\n플래시 메모리 특징:\n• 전원이 꺼져도 정보가 지워지지 않는 비휘발성 메모리\n• 소비 전력이 낮고 입출력이 자유로움\n• 블록 단위로 저장",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 15,
@@ -222,7 +236,8 @@
     "explanation": "휴지통은 디스크 드라이브마다 한 개씩 만들 수 있습니다. ✓\n\n② 용량이 초과되면 가장 먼저 삭제된 파일이 영구 삭제됩니다.\n③ 휴지통에 보관된 파일, 폴더의 이름을 변경할 수 없습니다.\n④ 휴지통에서 파일을 직접 실행할 수 없으며, 복원 후에 실행 가능합니다.",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 16,
@@ -237,7 +252,8 @@
     "explanation": "점프 목록에서 항목을 제거하려면 <Delete> 키가 아니라 [마우스 오른쪽 클릭] → [목록에서 제거]를 선택해야 합니다.\n\n점프 목록: 최근에 작업했던 파일을 빠르게 확인 및 실행할 수 있는 기능",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 17,
@@ -252,7 +268,8 @@
     "explanation": "시스템 복원 시 Windows Update에 의한 변경 사항도 함께 복원됩니다.",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 18,
@@ -267,7 +284,8 @@
     "explanation": "컴퓨터의 동작에 필수적이고, 주 목적에 대한 특정 작업을 수행하는 소프트웨어는 응용 프로그램입니다. (예: 오버워치, 워드, 엑셀, 캐드, 포토샵)\n\n유틸리티(Utility): 컴퓨터의 여러 처리 과정을 보조하여 시스템을 편리하게 사용할 수 있도록 하는 프로그램",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 19,
@@ -282,7 +300,8 @@
     "explanation": "사용자 계정 컨트롤(UAC): 유해한 프로그램이나 불법 사용자가 컴퓨터 설정을 임의로 변경하려는 경우 이를 사용자에게 알려 컴퓨터를 제어할 수 있도록 도와주는 기능\n\nWindows Defender: 스파이웨어를 검색·제거하고 실시간 보호 기능을 제공 (불법 사용자 설정 변경 알림 기능은 없음)",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 20,
@@ -297,7 +316,8 @@
     "explanation": "드라이브 최적화(디스크 조각 모음)는 디스크의 용량을 증가시키지 않습니다. 단편화된 파일들을 재배치하여 디스크의 접근 속도를 향상시키는 것입니다.",
     "point": "컴퓨터 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 21,
@@ -311,13 +331,14 @@
     "answer": 3,
     "explanation": "고급 필터 조건:\n• 같은 행 → AND 조건 / 다른 행 → OR 조건\n\n조건1(1행): 성명이 '김*'(김으로 시작) AND 근속연수 > 10\n조건2(2행): 직위 = '사원' AND 근속연수 < 5\n\n→ 조건1 OR 조건2를 만족하는 데이터 추출:\n• 김일민: 김씨로 시작 AND 근속연수 10초과 → 조건1 ✓\n• 김유민: 직위 사원 AND 근속연수 5미만 → 조건2 ✓\n• 석영희: 직위 사원 AND 근속연수 5미만 → 조건2 ✓",
     "point": "스프레드시트 일반",
-    "image": "img/gi3_q21.png",
+    "image": "img/2gi3_q21.png",
     "option_images": [
-      "img/gi3_q21_1.png",
-      "img/gi3_q21_2.png",
-      "img/gi3_q21_3.png",
-      "img/gi3_q21_4.png"
-    ]
+      "img/2gi3_q21_1.png",
+      "img/2gi3_q21_2.png",
+      "img/2gi3_q21_3.png",
+      "img/2gi3_q21_4.png"
+    ],
+    "explanation_image": null
   },
   {
     "id": 22,
@@ -331,8 +352,9 @@
     "answer": 1,
     "explanation": "피벗 테이블 보고서 위치를 M3으로 설정했다면, 실제 표가 시작되는 셀은 보고서 필터 영역(M3) 아래인 M5 셀부터 시작됩니다. 따라서 피벗 테이블 보고서를 넣을 위치는 M3가 아닌 M5 셀이 맞습니다.",
     "point": "스프레드시트 일반",
-    "image": "img/gi3_q22.png",
-    "option_images": null
+    "image": "img/2gi3_q22.png",
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 23,
@@ -347,7 +369,8 @@
     "explanation": "글꼴 색, 셀 배경색, 값으로 정렬할 수 있습니다. ✓\n\n① 정렬 기준은 최대 64개입니다.\n③ 정렬 대상 범위에 병합된 셀이 포함된 경우 정렬할 수 없습니다.\n④ 숨겨진 행과 열 모두 정렬 결과에 포함되지 않습니다.",
     "point": "스프레드시트 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 24,
@@ -362,7 +385,13 @@
     "explanation": "데이터 유효성 검사의 오류 스타일은 경고, 중지, 정보 3가지입니다. '확인'은 오류 스타일에 해당하지 않습니다.",
     "point": "스프레드시트 일반",
     "image": null,
-    "option_images": null
+    "option_images": [
+      "img/2gi3_q24_1.png",
+      "img/2gi3_q24_2.png",
+      "img/2gi3_q24_3.png",
+      "img/2gi3_q24_4.png"
+    ],
+    "explanation_image": null
   },
   {
     "id": 25,
@@ -377,7 +406,8 @@
     "explanation": "숫자가 입력된 셀의 채우기 핸들을 <Ctrl>키를 누른 채 아래쪽으로 끌면 복사가 아닌 숫자가 1씩 증가합니다.\n<Ctrl> 키 없이 채우기 핸들을 드래그해야 같은 내용이 복사됩니다.",
     "point": "스프레드시트 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 26,
@@ -393,11 +423,12 @@
     "point": "스프레드시트 일반",
     "image": null,
     "option_images": [
-      "img/gi3_q26_1.png",
-      "img/gi3_q26_2.png",
-      "img/gi3_q26_3.png",
-      "img/gi3_q26_4.png"
-    ]
+      "img/2gi3_q26_1.png",
+      "img/2gi3_q26_2.png",
+      "img/2gi3_q26_3.png",
+      "img/2gi3_q26_4.png"
+    ],
+    "explanation_image": null
   },
   {
     "id": 27,
@@ -412,7 +443,8 @@
     "explanation": "[찾기 및 바꾸기] (<Ctrl>+<F>)에서 *, ?를 문자 자체로 찾으려면 만능 문자 앞에 물결표(~)를 입력합니다.\n예) ~* → * 문자 자체 검색, ~? → ? 문자 자체 검색\n\n와일드카드:\n• *: 모든 문자 포함 (0개 이상)\n• ?: 글자 수 제한 (정확히 1개)",
     "point": "스프레드시트 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 28,
@@ -426,8 +458,9 @@
     "answer": 2,
     "explanation": "<Home> 키를 누르면 현재 행의 첫 번째 열(A열)로 이동합니다.\n[D5] 셀에서 <Home> → [A5] 셀로 이동",
     "point": "스프레드시트 일반",
-    "image": "img/gi3_q28.png",
-    "option_images": null
+    "image": "img/2gi3_q28.png",
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 29,
@@ -442,7 +475,8 @@
     "explanation": "매크로는 시트가 달라도 동일한 통합 문서 내에서는 동일한 매크로 이름으로 기록할 수 없습니다. 매크로를 만들면 시트가 달라도 실행이 되기 때문에 동일한 이름으로 기록하는 것이 불가능합니다.",
     "point": "스프레드시트 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 30,
@@ -456,8 +490,9 @@
     "answer": 4,
     "explanation": "[A1] 셀에 포인터를 두고 매크로를 기록했을 때 '성적현황'이 [B1] 셀에 있으므로, A1 기준으로 한 칸 오른쪽(+1열)에 입력됩니다.\n\n상대 참조 매크로이므로 [C3] 셀에서 실행 시 C3에서 한 칸 오른쪽인 [D3] 셀에 '성적현황'이 입력됩니다.",
     "point": "스프레드시트 일반",
-    "image": "img/gi3_q30.png",
-    "option_images": null
+    "image": "img/2gi3_q30.png",
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 31,
@@ -471,8 +506,9 @@
     "answer": 2,
     "explanation": "=MOD(ROW(),2)=0: 현재 행 번호를 2로 나눈 나머지가 0인 경우 (= 짝수 행) ✓\n\n• MOD(인수, 제수): 인수를 제수로 나눈 나머지\n• ROW(): 현재 위치의 행 번호 반환\n• 나머지 0 = 짝수, 나머지 1 = 홀수\n\n=MOD(ROW(),2)=0 → 짝수 행 서식 적용\n=MOD(ROW(),2)=1 → 홀수 행 서식 적용",
     "point": "스프레드시트 일반",
-    "image": "img/gi3_q31.png",
-    "option_images": null
+    "image": "img/2gi3_q31.png",
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 32,
@@ -486,8 +522,9 @@
     "answer": 3,
     "explanation": "변경 후 차트에서 추가된 것은 세로 축 보조 눈금이 아닌 가로 축 보조 눈금입니다.",
     "point": "스프레드시트 일반",
-    "image": "img/gi3_q32.png",
-    "option_images": null
+    "image": "img/2gi3_q32.png",
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 33,
@@ -501,13 +538,14 @@
     "answer": 4,
     "explanation": "조건식: =B2>=AVERAGE($B$2:$B$8)\n\n• B2: 판매수량의 첫 번째 데이터 (상대참조 → 각 행과 비교)\n• AVERAGE($B$2:$B$8): 전체 판매수량의 평균 (절대참조 → 고정)\n• B2는 상대참조: 각 행의 판매수량과 비교해야 하므로\n• AVERAGE 범위는 절대참조: 평균값은 고정되어야 하므로",
     "point": "스프레드시트 일반",
-    "image": "img/gi3_q33.png",
+    "image": "img/2gi3_q33.png",
     "option_images": [
-      "img/gi3_q33_1.png",
-      "img/gi3_q33_2.png",
-      "img/gi3_q33_3.png",
-      "img/gi3_q33_4.png"
-    ]
+      "img/2gi3_q33_1.png",
+      "img/2gi3_q33_2.png",
+      "img/2gi3_q33_3.png",
+      "img/2gi3_q33_4.png"
+    ],
+    "explanation_image": null
   },
   {
     "id": 34,
@@ -522,7 +560,8 @@
     "explanation": "VLOOKUP의 네 번째 인수:\n• FALSE(0): 정확하게 일치하는 값 검색 → 오름차순 정렬 불필요\n• TRUE(1, 생략 가능): 근사값으로 검색 → 오름차순 정렬 필요\n\n따라서 FALSE로 사용하는 경우 오름차순 정렬이 반드시 필요하지 않습니다.",
     "point": "스프레드시트 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 35,
@@ -537,7 +576,8 @@
     "explanation": "이름은 최대 255자까지 지정할 수 있습니다. ✓\n\n이름 정의 규칙:\n• 이름은 최대 255자\n• 첫 글자는 문자나 밑줄(_)만 가능 (슬래시 불가)\n• 공백 사용 불가\n• 대소문자 구별하지 않음\n• 기본적으로 절대참조 사용\n• 같은 통합문서에서 동일한 이름 사용 불가",
     "point": "스프레드시트 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 36,
@@ -552,7 +592,8 @@
     "explanation": "<Alt>+<Enter>는 셀 내에서 줄 바꿈(줄 나누기)을 할 때 사용합니다.\n선택된 범위에 같은 값을 입력하려면 <Ctrl>+<Enter> 키를 눌러야 합니다.",
     "point": "스프레드시트 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": "img/2gi3_q36_ex.png"
   },
   {
     "id": 37,
@@ -567,7 +608,8 @@
     "explanation": "여러 데이터 계열이 각각의 고리로 표시되는 차트는 원형 차트가 아닌 도넛형 차트입니다.\n\n• 원형 차트: 전체 항목의 합에 대한 각 항목의 비율 표시, 한 개의 데이터 계열만 가짐, 축 없음\n• 도넛형 차트: 전체에 대한 각 부분의 관계 표시, 여러 개의 데이터 계열 사용 가능 (각각의 고리로 표시)",
     "point": "스프레드시트 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 38,
@@ -583,11 +625,12 @@
     "point": "스프레드시트 일반",
     "image": null,
     "option_images": [
-      "img/gi3_q38_1.png",
-      "img/gi3_q38_2.png",
-      "img/gi3_q38_3.png",
-      "img/gi3_q38_4.png"
-    ]
+      "img/2gi3_q38_1.png",
+      "img/2gi3_q38_2.png",
+      "img/2gi3_q38_3.png",
+      "img/2gi3_q38_4.png"
+    ],
+    "explanation_image": null
   },
   {
     "id": 39,
@@ -602,7 +645,8 @@
     "explanation": "④ 배율을 '자동 맞춤'으로 선택하고 용지 너비와 용지 높이를 1로 지정하면 여러 페이지가 한 페이지에 출력되도록 자동 조정됩니다. ✓\n\n① [페이지설정] - [시트] 탭에서 행/열 머리글 인쇄 여부 설정 가능\n② [인쇄 미리 보기] 상태의 [페이지설정] - [시트] 탭에서는 인쇄 영역·반복할 행/열 설정이 비활성화\n③ 인쇄 배율은 10%~400%까지 가능",
     "point": "스프레드시트 일반",
     "image": null,
-    "option_images": null
+    "option_images": null,
+    "explanation_image": null
   },
   {
     "id": 40,
@@ -616,7 +660,8 @@
     "answer": 2,
     "explanation": "[페이지 설정] - [시트] 탭에서 '눈금선'과 '행/열 머리글'을 체크하면 인쇄 시 눈금선과 행/열 머리글이 함께 출력됩니다.\n\n① [시트 옵션]의 '인쇄'에 체크하면 됩니다 ('보기'가 아님)\n③, ④는 화면 표시 설정이며 인쇄 설정이 아닙니다.",
     "point": "스프레드시트 일반",
-    "image": "img/gi3_q40.png",
-    "option_images": null
+    "image": "img/2gi3_q40.png",
+    "option_images": null,
+    "explanation_image": "img/2gi3_q40_ex.png"
   }
 ]
