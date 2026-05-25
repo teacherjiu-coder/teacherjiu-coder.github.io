@@ -22,7 +22,7 @@ const GRADE_CONFIG = {
 };
 
 const AVAILABLE_ROUND_NUMS = {
-  2: { sangsi: [1, 2, 3, 4, 5], jeonggi: [1, 2, 3, 4, 5] },
+  2: { sangsi: [1, 2, 3, 4, 5], jeonggi: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
   1: { sangsi: [], jeonggi: [1, 2] },
 };
 
