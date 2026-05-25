@@ -250,7 +250,7 @@
     ],
     "answer": 4,
     "explanation": "작업 표시줄 바로 가기 메뉴에서는 계단식 창 배열, 창 가로/세로 정렬 보기, 작업 표시줄 잠금 등을 설정할 수 있습니다.\n아이콘 자동 정렬은 바탕 화면 바로 가기 메뉴에서 설정하는 항목으로, 작업 표시줄 메뉴에는 없습니다.",
-    "image": "img/2gi7_q17.png",
+    "image": null,
     "option_images": null,
     "explanation_image": "img/2gi7_q17_ex.png"
   },
@@ -400,7 +400,7 @@
     ],
     "answer": 4,
     "explanation": "매크로 기록 대화상자에 '작업 통합 문서'라는 항목은 없습니다.",
-    "image": "img/2gi7_q27.png",
+    "image": null,
     "option_images": null,
     "explanation_image": "img/2gi7_q27_ex.png"
   },
