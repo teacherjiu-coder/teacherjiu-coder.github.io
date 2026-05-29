@@ -733,6 +733,7 @@ function renderOptions(q, answered, ans, isExam) {
   const optionsEl = $("#options");
   optionsEl.innerHTML = "";
   const useImages = hasOptionImages(q);
+  optionsEl.classList.toggle("options-image-grid", useImages);
 
   q.options.forEach((opt, i) => {
     const choice = i + 1;
@@ -742,7 +743,7 @@ function renderOptions(q, answered, ans, isExam) {
     btn.dataset.index = String(choice);
 
     if (useImages) {
-      btn.innerHTML = `<span class="option-label">${OPTION_LABELS[i]}</span><img src="${q.option_images[i]}" alt="보기 ${OPTION_LABELS[i]}" class="option-img" style="max-width:200px;height:auto;border-radius:6px;" onerror="this.style.display='none'">`;
+      btn.innerHTML = `<span class="option-label">${OPTION_LABELS[i]}</span><img src="${q.option_images[i]}" alt="보기 ${OPTION_LABELS[i]}" class="option-img" onerror="this.style.display='none'">`;
     } else {
       btn.textContent = opt;
     }

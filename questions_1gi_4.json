@@ -347,7 +347,7 @@
     "answer": 1,
     "explanation": "MATCH 함수에서 두 가지 조건(월·제품명)을 한꺼번에 찾으려면 두 값을 '&'로 연결해서 비교 대상도 똑같이 '&'로 연결해야 합니다. 단가 표의 첫 열이 \"제품명\", 둘째 열이 \"월\"이라면 찾을 값은 MONTH(A2)&B2, 비교 범위는 $B$10:$B$13&$A$10:$A$13 형태가 되어야 합니다. 이를 정확히 만족하는 보기는 ①번입니다.",
     "point": "다중 조건 MATCH: 찾을 값1&값2 / 범위1&범위2 형태로 결합 (배열 수식)\nINDEX-MATCH 조합: VLOOKUP의 한계를 보완하는 강력한 조회 함수 조합\n배열 수식은 입력 후 ＜Ctrl＞+＜Shift＞+＜Enter＞로 마무리\n암기 팁: 다중 조건 = \"& 연결\", 입력 = \"Ctrl+Shift+Enter\"!",
-    "image": "1gi4_q22.png",
+    "image": "img/1gi4_q22.png",
     "option_images": null,
     "explanation_image": null
   },
@@ -427,7 +427,7 @@
     "answer": 3,
     "explanation": "수학식 √16 × (|-2| + 2³) 을 엑셀 함수로 표현하면 SQRT(16) × (ABS(-2) + POWER(2,3))이 됩니다. POWER(밑수, 지수) 함수는 \"밑수의 지수승\"을 계산하므로 2의 3제곱은 POWER(2,3)입니다. SQRT는 인수가 하나뿐인 제곱근 함수이고, ABS는 절댓값 함수입니다.",
     "point": "SQRT(값): 제곱근 (인수 1개)\nPOWER(밑수, 지수): 거듭제곱 → POWER(2,3) = 8\nABS(값): 절댓값\n암기 팁: POWER는 \"밑수 먼저, 지수 나중\" 순서! POWER(2,3) = 2³",
-    "image": "1gi4_q27.png",
+    "image": "img/1gi4_q27.png",
     "option_images": null,
     "explanation_image": null
   },
@@ -459,7 +459,7 @@
     "answer": 4,
     "explanation": "피벗 테이블에서 값 영역은 합계·평균 같은 숫자 집계 결과를 표시하는 영역입니다. 문제 이미지의 값 영역에는 \"부서\"가 아니라 \"통근거리\" 같은 숫자 필드가 사용되어 있습니다. 부서는 문자 데이터이므로 값 영역이 아닌 행/열 레이블이나 필터 영역에 들어갑니다.",
     "point": "피벗 테이블 4가지 영역: 보고서 필터 / 행 레이블 / 열 레이블 / 값\n값 영역: 주로 숫자 데이터 (합계·평균·개수 등 집계용)\n행/열 레이블: 주로 문자 또는 그룹화할 데이터\n암기 팁: 값 영역은 \"숫자\"가 들어가는 자리! 문자는 행/열로!",
-    "image": "1gi4_q29.png",
+    "image": "img/1gi4_q29.png",
     "option_images": null,
     "explanation_image": null
   },
@@ -539,7 +539,7 @@
     "answer": 4,
     "explanation": "엑셀에서 같은 열에 이미 입력된 데이터를 드롭다운 목록으로 빠르게 불러오는 단축키는 ＜Alt＞+＜↓＞입니다. 이 단축키를 누르면 위쪽 셀들의 값이 목록으로 표시되어, 클릭만으로 값을 입력할 수 있습니다.",
     "point": "Alt+↓: 같은 열의 기존 입력값을 드롭다운 목록으로 표시 → 빠른 입력\nCtrl+↓: 데이터의 마지막 행으로 이동\nShift+↓: 아래 셀까지 선택 영역 확장\n암기 팁: \"Alt+↓ = 자동 완성 목록\"!",
-    "image": "1gi4_q34.png",
+    "image": "img/1gi4_q34.png",
     "option_images": null,
     "explanation_image": null
   },
@@ -571,7 +571,7 @@
     "answer": 2,
     "explanation": "계열 겹치기 옵션을 \"음수\" 값으로 설정하면 막대들이 서로 겹치지 않고 \"떨어져서\" 표시됩니다. 표식이 \"겹쳐 보이게\" 하려면 양수 값으로 설정해야 합니다. 음수와 양수의 역할이 반대로 설명되었으므로 ②번이 옳지 않습니다.",
     "point": "계열 겹치기: 양수 → 막대가 겹침 / 음수 → 막대 사이에 간격 / 0 → 딱 붙음\n간격 너비: 값이 클수록 막대 사이 간격이 넓어짐\n데이터 레이블 위치: 안쪽 끝에 / 가운데 / 바깥쪽 끝에 등 선택 가능\n암기 팁: \"겹쳐 보이게 = 양수\", \"떨어져 보이게 = 음수\"!",
-    "image": "1gi4_q36.png",
+    "image": "img/1gi4_q36.png",
     "option_images": null,
     "explanation_image": null
   },
@@ -587,7 +587,7 @@
     "answer": 2,
     "explanation": "DSUM 함수는 \"데이터베이스 합계 함수\"로 (데이터베이스, 필드, 조건범위) 세 가지 인수를 요구합니다. ②번처럼 한 가지 인수만 넣으면 함수 형식이 잘못되어 오류가 발생합니다. 조건을 만족하는 셀의 개수를 구하려면 SUM, COUNT, COUNTIF, SUMPRODUCT 같은 함수를 사용해야 합니다.",
     "point": "SUM((범위=조건)*1): 조건을 만족하는 셀의 개수를 셈 (TRUE=1, FALSE=0)\nCOUNT(IF(범위=조건,1)): 조건을 만족할 때만 숫자 1을 반환, COUNT가 숫자 개수 셈\nDSUM 형식: =DSUM(데이터베이스, 필드, 조건범위) → 인수 3개 필수\n암기 팁: D 시리즈 함수(DSUM/DCOUNT/DAVERAGE 등)는 \"DB 구조\"를 따른다!",
-    "image": "1gi4_q37.png",
+    "image": "img/1gi4_q37.png",
     "option_images": null,
     "explanation_image": null
   },
@@ -859,7 +859,7 @@
     "answer": 2,
     "explanation": "본문의 \"모든\" 컨트롤에 일괄 적용해야 하므로 먼저 본문의 모든 컨트롤을 함께 선택해야 합니다. 그리고 적용 기준이 \"성별\" 컨트롤의 값이지만 서식은 다른 컨트롤에 적용되어야 하므로 \"필드 값이 같음\"이 아닌 \"조건식\" 옵션을 사용해야 합니다. 조건식 형태로 [성별]='여자'를 지정하면 성별이 '여자'인 행 전체의 모든 컨트롤에 서식이 적용됩니다.",
     "point": "조건부 서식 적용 옵션: 필드 값이 ~ / 다른 레코드와 비교 / 식이 ~ (조건식)\n다른 컨트롤의 값으로 현재 컨트롤 서식을 결정 = 반드시 \"식이\" 옵션 사용\n암기 팁: \"성별 기준으로 모든 컨트롤 서식\" = 다중 컨트롤 선택 + 조건식!",
-    "image": "1gi4_q54.png",
+    "image": "img/1gi4_q54.png",
     "option_images": null,
     "explanation_image": null
   },
@@ -891,7 +891,7 @@
     "answer": 4,
     "explanation": "Access에서 레코드의 개수를 세는 함수는 Count이며, 모든 레코드(Null 포함)를 세려면 \"=Count(*)\"를 사용합니다. 또한 합계를 구하는 함수는 Total이 아니라 \"Sum\"입니다. CountA, Total 같은 함수는 엑셀에는 있어도 Access에는 존재하지 않습니다. 따라서 두 컨트롤이 모두 정확한 Access 함수를 사용한 보기는 ④번입니다.",
     "point": "Access 집계 함수: Sum(합계) / Avg(평균) / Count(개수) / Max(최댓값) / Min(최솟값) / Var(분산) / StDev(표준편차)\nCount(*): Null 포함 모든 레코드 / Count(필드): Null 제외\n주의: Total, CountA는 엑셀 함수이며 Access에 없음\n암기 팁: Access 합계 = Sum (엑셀의 SUM과 같음), Total은 없음!",
-    "image": "1gi4_q56.png",
+    "image": "img/1gi4_q56.png",
     "option_images": null,
     "explanation_image": null
   },
