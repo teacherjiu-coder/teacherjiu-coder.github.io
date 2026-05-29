@@ -17,13 +17,13 @@ const $$ = (sel) => document.querySelectorAll(sel);
 
 /** 급수별 회차 수 · 이용 가능 회차 (파일명: questions_{급}ss|gi_{회}.json) */
 const GRADE_CONFIG = {
-  1: { label: "컴활 1급", sangsiCount: 5, jeonggiCount: 5 },
+  1: { label: "컴활 1급", sangsiCount: 5, jeonggiCount: 10 },
   2: { label: "컴활 2급", sangsiCount: 5, jeonggiCount: 10 },
 };
 
 const AVAILABLE_ROUND_NUMS = {
   2: { sangsi: [1, 2, 3, 4, 5], jeonggi: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
-  1: { sangsi: [], jeonggi: [1, 2] },
+  1: { sangsi: [], jeonggi: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
 };
 
 function roundFileName(grade, type, num) {
