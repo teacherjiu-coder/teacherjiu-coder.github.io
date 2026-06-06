@@ -1,0 +1,56 @@
+# macOS
+.DS_Store
+**/.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Node / npm
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+*.log
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Capacitor — 빌드·동기화 산출물
+www/
+native.bundle.js
+.capacitor/
+
+# Android (Capacitor)
+android/.idea/
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/capacitor-cordova-android-plugins/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+android/app/src/main/res/xml/config.xml
+*.apk
+*.aab
+
+# iOS (npx cap add ios 후)
+ios/App/Pods/
+ios/App/build/
+ios/DerivedData/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*~
