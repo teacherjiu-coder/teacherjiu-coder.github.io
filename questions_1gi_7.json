@@ -483,15 +483,15 @@
     "id": 31,
     "question": "a=MsgBox(\"작업을 종료합니까?\", vbYesNoCancel + vbQuestion, \"확인\") 이라는 VBA 코드로 표시되는 메시지 박스에 관한 설명으로 옳지 않은 것은?",
     "options": [
-      "①",
-      "②",
-      "③",
-      "④"
+      "① 메시지 박스에 정보 아이콘(⚠️)이 표시된다.",
+      "② 메시지 박스의 제목으로 '확인'이 표시된다.",
+      "③ 메시지 박스의 <Esc> 키를 누르면 작업이 취소된다.",
+      "④ 메시지 박스에 '예', '아니오', '취소' 버튼이 표시된다."
     ],
     "answer": 1,
     "explanation": "VBA 코드에서 vbQuestion은 \"물음표(?) 아이콘\"을 표시하는 옵션입니다. 정보 아이콘은 \"vbInformation\"을 사용해야 표시됩니다.",
     "point": "MsgBox 아이콘 옵션: vbInformation(정보) / vbQuestion(물음표) / vbExclamation(경고) / vbCritical(오류)\nMsgBox 버튼 옵션: vbOKOnly / vbYesNo / vbYesNoCancel / vbOKCancel\nEsc 키: 취소 버튼이 있으면 \"취소\" 동작 실행\n암기 팁: vbQuestion = \"?\" 아이콘! 정보(i) 아이콘은 vbInformation!",
-    "image": "img/1gi7_q31_1.png",
+    "image": null,
     "option_images": null,
     "explanation_image": null
   },

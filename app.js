@@ -344,6 +344,48 @@ function renderPassFailResult(sc, questions) {
   $("#result-passfail").className = `result-passfail ${passed ? "pass" : "fail"}`;
 }
 
+const PASS_COUNT_BASE = 29600;
+const PASS_COUNT_BASE_DATE = new Date(2026, 4, 31);
+
+function getPassCount() {
+  const today = new Date();
+  let days = Math.floor((today - PASS_COUNT_BASE_DATE) / 86400000);
+  if (days < 0) days = 0;
+  let total = PASS_COUNT_BASE;
+  for (let i = 0; i < days; i++) {
+    const s = Math.sin(PASS_COUNT_BASE_DATE.getTime() / 86400000 + i) * 10000;
+    const frac = s - Math.floor(s);
+    total += 1 + Math.floor(frac * 5);
+  }
+  return total;
+}
+
+function updatePassCountDisplay() {
+  const text = getPassCount().toLocaleString("ko-KR");
+  $$(".promo-pass-count").forEach((el) => {
+    el.textContent = text;
+  });
+}
+
+function updateResultPromoHeadline(passed) {
+  const headEl = $("#result-promo-headline");
+  if (!headEl) return;
+  headEl.innerHTML = passed
+    ? "합격 축하해요! 🎉<br>실기도 핵심 강의로 이어서 끝내세요"
+    : "조금만 더 다지면 합격권이에요.<br>강의로 약점만 빠르게 메우세요";
+}
+
+function isNativeApp() {
+  return window.ComhwalNative?.isNative?.() === true;
+}
+
+function initPlatformPromo() {
+  const native = isNativeApp();
+  $$("[data-platform='web']").forEach((el) => el.classList.toggle("hidden", native));
+  $$("[data-platform='native']").forEach((el) => el.classList.toggle("hidden", !native));
+  if (!native) updatePassCountDisplay();
+}
+
 function formatTime(sec) {
   const m = Math.floor(sec / 60);
   const s = sec % 60;
@@ -957,6 +999,14 @@ function showResult() {
     session.mode !== "exam" || examWrongCount === 0
   );
 
+  if (!isNativeApp()) {
+    const passed =
+      session.mode === "exam" || session.mode === "normal" || session.mode === "random"
+        ? isResultPassed(sc, session.questions)
+        : sc.passed;
+    updateResultPromoHeadline(passed);
+    updatePassCountDisplay();
+  }
 }
 
 function saveExamWrongToNoteAndGo() {
@@ -1178,6 +1228,7 @@ async function init() {
   initResult();
 
   updateAccessUI();
+  initPlatformPromo();
   initChannelLinks();
   initNotifications();
   showScreen("menu");
