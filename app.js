@@ -1,5 +1,11 @@
-const ACCESS_CODE = "JW1116";
-const EXAM_DURATION_SEC = 40 * 60;
+const EXAM_DURATION_SEC_BY_GRADE = {
+  1: 60 * 60,
+  2: 40 * 60,
+};
+
+function getExamDurationSec(grade) {
+  return EXAM_DURATION_SEC_BY_GRADE[grade] ?? EXAM_DURATION_SEC_BY_GRADE[2];
+}
 const OPTION_LABELS = ["①", "②", "③", "④"];
 const IMG_STYLE = "max-width:100%; height:auto; margin:10px 0; border-radius:8px; display:block;";
 
@@ -76,31 +82,6 @@ function showScreen(name) {
   $("#btn-access-code").classList.toggle("hidden", name !== "menu");
 }
 
-function isProUnlocked() {
-  if (localStorage.getItem(LS.pro) === "true") return true;
-  if (localStorage.getItem("comhwal_pro_unlocked") === "1") {
-    unlockPro();
-    localStorage.removeItem("comhwal_pro_unlocked");
-    return true;
-  }
-  if (localStorage.getItem("comhwal_coupon_ok") === "1") {
-    unlockPro();
-    localStorage.removeItem("comhwal_coupon_ok");
-    return true;
-  }
-  return false;
-}
-
-function unlockPro() {
-  localStorage.setItem(LS.pro, "true");
-}
-
-function isRoundUnlocked(type, num) {
-  if (type !== "sangsi" && type !== "jeonggi") return false;
-  if (num === 1) return true;
-  return isProUnlocked();
-}
-
 function showLockToast() {
   const toast = $("#lock-toast");
   toast.classList.remove("hidden");
@@ -144,7 +125,7 @@ function selectGrade(grade) {
 
 function updateAccessUI() {
   const btn = $("#btn-access-code");
-  if (isProUnlocked()) {
+  if (isPro()) {
     btn.textContent = "🏅 Pro";
     btn.classList.add("pro-badge");
     btn.setAttribute("aria-label", "Pro 이용 중");
@@ -361,37 +342,6 @@ function renderPassFailResult(sc, questions) {
   const passed = isResultPassed(sc, questions);
   $("#result-passfail").textContent = passed ? "합격! 🎉" : "불합격 😢";
   $("#result-passfail").className = `result-passfail ${passed ? "pass" : "fail"}`;
-}
-
-const PASS_COUNT_BASE = 29600;
-const PASS_COUNT_BASE_DATE = new Date(2026, 4, 31);
-
-function getPassCount() {
-  const today = new Date();
-  let days = Math.floor((today - PASS_COUNT_BASE_DATE) / 86400000);
-  if (days < 0) days = 0;
-  let total = PASS_COUNT_BASE;
-  for (let i = 0; i < days; i++) {
-    const s = Math.sin(PASS_COUNT_BASE_DATE.getTime() / 86400000 + i) * 10000;
-    const frac = s - Math.floor(s);
-    total += 1 + Math.floor(frac * 5);
-  }
-  return total;
-}
-
-function updatePassCountDisplay() {
-  const text = getPassCount().toLocaleString("ko-KR");
-  $$(".promo-pass-count").forEach((el) => {
-    el.textContent = text;
-  });
-}
-
-function updateResultPromoHeadline(passed) {
-  const headEl = $("#result-promo-headline");
-  if (!headEl) return;
-  headEl.innerHTML = passed
-    ? "합격 축하해요! 🎉<br>실기도 핵심 강의로 이어서 끝내세요"
-    : "조금만 더 다지면 합격권이에요.<br>강의로 약점만 빠르게 메우세요";
 }
 
 function formatTime(sec) {
@@ -641,7 +591,8 @@ function stopTimer() {
 }
 
 function startExamTimer() {
-  let remaining = EXAM_DURATION_SEC;
+  const durationSec = getExamDurationSec(session.grade || currentGrade);
+  let remaining = durationSec;
   const timerEl = $("#exam-timer");
   timerEl.textContent = formatTime(remaining);
   timerEl.classList.remove("warning");
@@ -652,7 +603,7 @@ function startExamTimer() {
     if (remaining <= 300) timerEl.classList.add("warning");
     if (remaining <= 0) {
       stopTimer();
-      session.examElapsedSec = EXAM_DURATION_SEC;
+      session.examElapsedSec = durationSec;
       finishQuiz(true);
     }
   }, 1000);
@@ -961,8 +912,9 @@ function finishQuiz(timeUp = false) {
   stopTimer();
 
   if (session.mode === "exam" && session.examStartedAt) {
+    const durationSec = getExamDurationSec(session.grade || currentGrade);
     session.examElapsedSec = timeUp
-      ? EXAM_DURATION_SEC
+      ? durationSec
       : Math.floor((Date.now() - session.examStartedAt) / 1000);
   }
 
@@ -1005,12 +957,6 @@ function showResult() {
     session.mode !== "exam" || examWrongCount === 0
   );
 
-  const passed =
-    session.mode === "exam" || session.mode === "normal" || session.mode === "random"
-      ? isResultPassed(sc, session.questions)
-      : sc.passed;
-  updateResultPromoHeadline(passed);
-  updatePassCountDisplay();
 }
 
 function saveExamWrongToNoteAndGo() {
@@ -1083,7 +1029,7 @@ function bindCodeInputMask() {
 }
 
 function openCodeModal() {
-  if (isProUnlocked()) return;
+  if (isPro()) return;
   $("#code-input").value = "";
   $("#code-error").classList.add("hidden");
   $("#code-modal-overlay").classList.remove("hidden");
@@ -1096,7 +1042,7 @@ function closeCodeModal() {
 
 function submitAccessCode() {
   const val = sanitizeAccessCode($("#code-input").value);
-  if (val === ACCESS_CODE.toUpperCase()) {
+  if (validateAccessCode(val)) {
     unlockPro();
     $("#code-error").classList.add("hidden");
     closeCodeModal();
@@ -1109,7 +1055,7 @@ function submitAccessCode() {
 function initAccessCode() {
   bindCodeInputMask();
   $("#btn-access-code").addEventListener("click", () => {
-    if (isProUnlocked()) return;
+    if (isPro()) return;
     openCodeModal();
   });
   $("#code-submit").addEventListener("click", submitAccessCode);
@@ -1215,10 +1161,8 @@ function initQuiz() {
 
 function initResult() {
   $("#btn-menu").addEventListener("click", () => {
-    showRoundSelectView();
+    showGradeSelectView();
     showScreen("menu");
-    const { grade, type, num } = session.selectedRound || {};
-    if (grade && type && num) selectRound(grade, type, num);
   });
 
   $("#btn-save-wrongnote").addEventListener("click", saveExamWrongToNoteAndGo);
@@ -1234,9 +1178,165 @@ async function init() {
   initResult();
 
   updateAccessUI();
-  updatePassCountDisplay();
+  initChannelLinks();
+  initNotifications();
   showScreen("menu");
   showGradeSelectView();
 }
 
-init();
+function isOverlayVisible(sel) {
+  const el = $(sel);
+  return el && !el.classList.contains("hidden");
+}
+
+window.handleAppBackButton = function handleAppBackButton() {
+  if (isOverlayVisible("#code-modal-overlay")) {
+    closeCodeModal();
+    return true;
+  }
+  if (isOverlayVisible("#confirm-overlay")) {
+    $("#confirm-overlay").classList.add("hidden");
+    return true;
+  }
+  if (isOverlayVisible("#modal-overlay")) {
+    $("#modal-overlay").classList.add("hidden");
+    return true;
+  }
+  if (!$("#settings-panel").classList.contains("hidden")) {
+    closeSettings();
+    return true;
+  }
+
+  if (screens.quiz.classList.contains("active")) {
+    stopTimer();
+    saveProgress();
+    showRoundSelectView();
+    showScreen("menu");
+    return true;
+  }
+  if (screens.result.classList.contains("active")) {
+    showRoundSelectView();
+    showScreen("menu");
+    return true;
+  }
+  if (screens.wrongnoteEmpty.classList.contains("active")) {
+    showGradeSelectView();
+    showScreen("menu");
+    return true;
+  }
+  if (
+    screens.menu.classList.contains("active") &&
+    !$("#round-select-view").classList.contains("hidden")
+  ) {
+    showGradeSelectView();
+    return true;
+  }
+  return false;
+};
+
+function openExternalLink(key) {
+  const url = LINKS[key];
+  if (!url) return;
+  if (window.ComhwalNative?.openExternal) {
+    window.ComhwalNative.openExternal(url);
+  } else {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+}
+
+function initChannelLinks() {
+  $$("[data-channel-link]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      openExternalLink(btn.dataset.channelLink);
+    });
+  });
+}
+
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
+
+function initNotifications() {
+  const section = $("#notif-settings-section");
+  const keys = window.ComhwalNative?.NOTIF_KEYS;
+  if (!section || !keys) return;
+
+  if (!window.ComhwalNative?.isNative?.()) {
+    section.classList.add("hidden");
+    return;
+  }
+
+  const dailyToggle = $("#notif-daily-enabled");
+  const wrongToggle = $("#notif-wrong-enabled");
+  const dailyTime = $("#notif-daily-time");
+  const wrongTime = $("#notif-wrong-time");
+
+  dailyToggle.checked = localStorage.getItem(keys.dailyEnabled) === "1";
+  wrongToggle.checked = localStorage.getItem(keys.wrongEnabled) === "1";
+
+  const loadTime = (hourKey, minuteKey, defaultHour) => {
+    const hour = Number(localStorage.getItem(hourKey));
+    const minute = Number(localStorage.getItem(minuteKey));
+    const h = Number.isFinite(hour) ? hour : defaultHour;
+    const m = Number.isFinite(minute) ? minute : 0;
+    return `${pad2(h)}:${pad2(m)}`;
+  };
+
+  dailyTime.value = loadTime(keys.dailyHour, keys.dailyMinute, 19);
+  wrongTime.value = loadTime(keys.wrongHour, keys.wrongMinute, 20);
+
+  const saveTime = (input, hourKey, minuteKey) => {
+    const [h, m] = input.value.split(":").map(Number);
+    localStorage.setItem(hourKey, String(h));
+    localStorage.setItem(minuteKey, String(m));
+    mirrorStorageKey(hourKey, String(h));
+    mirrorStorageKey(minuteKey, String(m));
+  };
+
+  const persistAndSchedule = async () => {
+    if (window.ComhwalNative?.applyNotificationSchedule) {
+      await window.ComhwalNative.applyNotificationSchedule();
+    }
+  };
+
+  const onDailyToggle = async () => {
+    const on = dailyToggle.checked;
+    localStorage.setItem(keys.dailyEnabled, on ? "1" : "0");
+    mirrorStorageKey(keys.dailyEnabled, on ? "1" : "0");
+    if (on && window.ComhwalNative?.requestNotificationPermission) {
+      await window.ComhwalNative.requestNotificationPermission();
+    }
+    await persistAndSchedule();
+  };
+
+  const onWrongToggle = async () => {
+    const on = wrongToggle.checked;
+    localStorage.setItem(keys.wrongEnabled, on ? "1" : "0");
+    mirrorStorageKey(keys.wrongEnabled, on ? "1" : "0");
+    if (on && window.ComhwalNative?.requestNotificationPermission) {
+      await window.ComhwalNative.requestNotificationPermission();
+    }
+    await persistAndSchedule();
+  };
+
+  dailyToggle.addEventListener("change", onDailyToggle);
+  wrongToggle.addEventListener("change", onWrongToggle);
+  dailyTime.addEventListener("change", async () => {
+    saveTime(dailyTime, keys.dailyHour, keys.dailyMinute);
+    await persistAndSchedule();
+  });
+  wrongTime.addEventListener("change", async () => {
+    saveTime(wrongTime, keys.wrongHour, keys.wrongMinute);
+    await persistAndSchedule();
+  });
+
+  persistAndSchedule();
+}
+
+(async function bootstrap() {
+  if (window.ComhwalNative?.ready) {
+    await window.ComhwalNative.ready();
+  }
+  await init();
+})();

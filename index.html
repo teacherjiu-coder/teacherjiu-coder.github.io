@@ -21,6 +21,25 @@
       <button type="button" class="font-size-btn active" data-size="normal">보통</button>
       <button type="button" class="font-size-btn" data-size="large">크게</button>
     </div>
+    <div id="notif-settings-section" class="notif-settings">
+      <p class="settings-label">알림</p>
+      <label class="notif-row">
+        <input type="checkbox" id="notif-daily-enabled" />
+        <span>매일 학습 리마인더</span>
+      </label>
+      <label class="notif-time-row">
+        <span class="notif-time-label">알림 시간</span>
+        <input type="time" id="notif-daily-time" class="notif-time-input" />
+      </label>
+      <label class="notif-row">
+        <input type="checkbox" id="notif-wrong-enabled" />
+        <span>오답 복습 알림</span>
+      </label>
+      <label class="notif-time-row">
+        <span class="notif-time-label">복습 알림 시간</span>
+        <input type="time" id="notif-wrong-time" class="notif-time-input" />
+      </label>
+    </div>
     <button type="button" id="btn-settings-close" class="btn btn-secondary btn-sm">닫기</button>
   </div>
   <div id="settings-backdrop" class="settings-backdrop hidden"></div>
@@ -59,42 +78,21 @@
           </button>
         </div>
 
-        <a
-          class="promo-card"
-          href="https://smartstore.naver.com/teacher_jiwoo/products/6768603406"
-          target="_blank"
-          rel="noopener"
-        >
-          <span class="promo-badge">⭐ 9.8 / 10 · 누적 수강생 <span class="promo-pass-count">29,600</span>명</span>
-          <h2 class="promo-title">컴활 1·2급 올인원 패키지</h2>
-          <p class="promo-desc">강의 74강 + 교재 PDF 전권 + 엑셀 예제 파일</p>
-          <div class="promo-plans">
-            <div class="promo-plan">
-              <span class="promo-term">1개월</span>
-              <span class="promo-price">24,000원</span>
-            </div>
-            <div class="promo-plan promo-plan-best">
-              <div class="promo-plan-left">
-                <span class="promo-term">3개월</span>
-                <span class="promo-tag-best">BEST</span>
-              </div>
-              <div class="promo-plan-right">
-                <span class="promo-sale">18% 할인</span>
-                <span class="promo-price">59,000원</span>
-              </div>
-            </div>
-            <div class="promo-plan">
-              <div class="promo-plan-left">
-                <span class="promo-term">6개월</span>
-              </div>
-              <div class="promo-plan-right">
-                <span class="promo-sale">45% 할인</span>
-                <span class="promo-price">79,000원</span>
-              </div>
-            </div>
+        <div class="channel-card">
+          <h2 class="channel-title">지우쌤 학습 콘텐츠</h2>
+          <p class="channel-desc">유튜브 · 인스타 · 카페에서 이어서 학습하세요</p>
+          <div class="channel-actions">
+            <button type="button" class="channel-btn" data-channel-link="youtube">
+              ▶ 유튜브 강의 보러가기
+            </button>
+            <button type="button" class="channel-btn channel-btn-secondary" data-channel-link="instagram">
+              엑셀 실무 쇼츠 보기
+            </button>
+            <button type="button" class="channel-btn channel-btn-secondary" data-channel-link="cafe">
+              카페에서 PDF 자료받기
+            </button>
           </div>
-          <p class="promo-cta">👉 강의로 한 번에 끝내기</p>
-        </a>
+        </div>
 
         <div class="patchnotes-card patchnotes-collapsible" id="patchnotes-card">
           <button type="button" class="patchnotes-head" id="patchnotes-toggle" aria-expanded="false">
@@ -225,17 +223,21 @@
         <button type="button" id="btn-save-wrongnote" class="btn btn-accent btn-lg hidden">틀린 문제 오답노트에 저장</button>
         <button type="button" id="btn-menu" class="btn btn-primary btn-lg">메인으로 돌아가기</button>
 
-        <a
-          class="promo-card promo-card-result"
-          href="https://smartstore.naver.com/teacher_jiwoo/products/6768603406"
-          target="_blank"
-          rel="noopener"
-        >
-          <span class="promo-badge">⭐ 9.8 / 10 · 누적 수강생 <span class="promo-pass-count">29,600</span>명</span>
-          <h3 class="promo-headline" id="result-promo-headline"></h3>
-          <p class="promo-desc">강의 74강 + 교재 PDF 전권 + 엑셀 예제 파일</p>
-          <p class="promo-cta">👉 강의로 한 번에 끝내기</p>
-        </a>
+        <div class="channel-card channel-card-result">
+          <h3 class="channel-title">더 공부하고 싶다면</h3>
+          <p class="channel-desc">유튜브 · 인스타 · 카페에서 이어서 학습하세요</p>
+          <div class="channel-actions">
+            <button type="button" class="channel-btn" data-channel-link="youtube">
+              ▶ 유튜브 강의 보러가기
+            </button>
+            <button type="button" class="channel-btn channel-btn-secondary" data-channel-link="instagram">
+              엑셀 실무 쇼츠 보기
+            </button>
+            <button type="button" class="channel-btn channel-btn-secondary" data-channel-link="cafe">
+              카페에서 PDF 자료받기
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -276,6 +278,10 @@
     </div>
   </div>
 
+  <script src="links.js"></script>
+  <script src="pro-access.js"></script>
+  <script src="storage-bridge.js"></script>
+  <script src="native.stub.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
