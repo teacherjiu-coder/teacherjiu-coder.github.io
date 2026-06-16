@@ -1221,6 +1221,7 @@ body.is-exam-quiz .btn-settings {
   width: 100%;
   max-width: 100%;
   height: auto;
+  max-height: 360px;
   display: block;
   border-radius: 10px;
   border: 1px solid var(--border);
@@ -1258,6 +1259,9 @@ body.is-exam-quiz .btn-settings {
   color: var(--text);
   cursor: pointer;
   line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
 }
 
 .option-btn:hover:not(:disabled) {

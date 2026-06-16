@@ -7,7 +7,7 @@ function getExamDurationSec(grade) {
   return EXAM_DURATION_SEC_BY_GRADE[grade] ?? EXAM_DURATION_SEC_BY_GRADE[2];
 }
 const OPTION_LABELS = ["①", "②", "③", "④"];
-const IMG_STYLE = "max-width:100%; height:auto; margin:10px 0; border-radius:8px; display:block;";
+const IMG_STYLE = "max-width:100%; height:auto; max-height:360px; margin:10px 0; border-radius:8px; display:block;";
 
 const LS = {
   pro: "isPro",

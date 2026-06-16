@@ -619,7 +619,7 @@
     "answer": 2,
     "explanation": "부분합은 그룹화할 필드를 기준으로 먼저 정렬해야 올바른 결과를 얻습니다. '정렬하지 않아도 된다'고 한 ②가 옳지 않습니다.",
     "point": "부분합 전 정렬 필수 / 여러 함수 중첩 시 '새 값으로 대치' 해제\n암기 팁: \"부분합은 정렬부터\"!",
-    "image": "img/1q39.png",
+    "image": null,
     "option_images": null,
     "explanation_image": null
   },
