@@ -7,7 +7,6 @@ function getExamDurationSec(grade) {
   return EXAM_DURATION_SEC_BY_GRADE[grade] ?? EXAM_DURATION_SEC_BY_GRADE[2];
 }
 const OPTION_LABELS = ["①", "②", "③", "④"];
-const IMG_STYLE = "max-width:100%; height:auto; max-height:360px; margin:10px 0; border-radius:8px; display:block;";
 
 const LS = {
   pro: "isPro",
@@ -715,7 +714,7 @@ function renderQuestionImage(q) {
   const imgWrap = $("#question-image-wrap");
 
   if (q.image) {
-    imgWrap.innerHTML = `<img src="${q.image}" alt="문제 ${q.id} 참고 이미지" style="${IMG_STYLE}" onerror="this.style.display='none'">`;
+    imgWrap.innerHTML = `<img src="${q.image}" alt="문제 ${q.id} 참고 이미지" class="question-img" onerror="this.style.display='none'">`;
     imgWrap.classList.remove("hidden");
     imgWrap.setAttribute("aria-hidden", "false");
   } else {
@@ -741,7 +740,7 @@ function renderExplanationImage(q) {
     // 단일 문자열 또는 배열 모두 지원
     const srcs = Array.isArray(q.explanation_image) ? q.explanation_image : [q.explanation_image];
     imgWrap.innerHTML = srcs
-      .map((src, i) => `<img src="${src}" alt="문제 ${q.id} 해설 참고 이미지${srcs.length > 1 ? ` (${i+1})` : ''}" style="${IMG_STYLE}" onerror="this.style.display='none'">`)
+      .map((src, i) => `<img src="${src}" alt="문제 ${q.id} 해설 참고 이미지${srcs.length > 1 ? ` (${i+1})` : ''}" class="question-img" onerror="this.style.display='none'">`)
       .join("");
     imgWrap.classList.remove("hidden");
     imgWrap.setAttribute("aria-hidden", "false");
