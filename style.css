@@ -1317,6 +1317,17 @@ body.is-exam-quiz .btn-settings {
   background: #fff;
 }
 
+.options-image-grid.options-image-compact .option-btn-image {
+  align-items: center;
+}
+
+.options-image-grid.options-image-compact .option-img {
+  width: auto;
+  max-width: 64px;
+  max-height: 64px;
+  margin: 0 auto;
+}
+
 .option-btn.selected-exam {
   border-color: var(--primary);
   background: var(--primary-light);

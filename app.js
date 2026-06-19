@@ -757,6 +757,7 @@ function renderOptions(q, answered, ans, isExam) {
   optionsEl.innerHTML = "";
   const useImages = hasOptionImages(q);
   optionsEl.classList.toggle("options-image-grid", useImages);
+  optionsEl.classList.toggle("options-image-compact", useImages && q.option_images_compact);
 
   q.options.forEach((opt, i) => {
     const choice = i + 1;
