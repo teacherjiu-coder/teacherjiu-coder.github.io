@@ -198,6 +198,7 @@ def q26_options() -> None:
 
 
 def q28() -> None:
+    # Row 1 header; data from row 2. Active cell D4 (ri=3, ci=3).
     rows = [
         ["10", "20", "30", "40", "50"],
         ["11", "21", "31", "41", "51"],
@@ -206,7 +207,14 @@ def q28() -> None:
         ["14", "24", "34", "44", "54"],
         ["15", "25", "35", "45", "55"],
     ]
-    img = draw_grid(rows, start_col="A", start_row=1, selected={(3, 3)}, cell_h=28)
+    img = draw_grid(
+        rows,
+        start_col="A",
+        start_row=1,
+        selected={(3, 3)},
+        cell_h=28,
+        header_rows={0},
+    )
     save("2gi3_q28.png", img)
 
 
