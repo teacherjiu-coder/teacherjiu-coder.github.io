@@ -1328,6 +1328,17 @@ body.is-exam-quiz .btn-settings {
   margin: 0 auto;
 }
 
+.options-image-grid.options-image-wide {
+  grid-template-columns: 1fr;
+}
+
+.options-image-grid.options-image-wide .option-img {
+  width: 100%;
+  max-width: 100%;
+  min-height: 88px;
+  object-fit: contain;
+}
+
 .option-btn.selected-exam {
   border-color: var(--primary);
   background: var(--primary-light);
