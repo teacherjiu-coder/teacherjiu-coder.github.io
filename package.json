@@ -1,0 +1,32 @@
+{
+  "name": "teacherjiu-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "지우쌤 컴활 필기 기출 — Capacitor 네이티브 앱",
+  "scripts": {
+    "build:native": "node scripts/build-native.mjs",
+    "sync:www": "node scripts/sync-www.mjs",
+    "build:web": "npm run build:native && npm run sync:www",
+    "cap:sync": "npm run build:web && npx cap sync",
+    "cap:copy": "npm run build:web && npx cap copy",
+    "cap:android": "npm run cap:sync && npx cap open android",
+    "cap:ios": "npm run cap:sync && npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.2.0",
+    "@capacitor/app": "^7.0.1",
+    "@capacitor/browser": "^7.0.1",
+    "@capacitor/core": "^7.2.0",
+    "@capacitor/ios": "^7.2.0",
+    "@capacitor/local-notifications": "^7.0.1",
+    "@capacitor/preferences": "^7.0.1",
+    "@capacitor/splash-screen": "^7.0.1",
+    "@capacitor/status-bar": "^7.0.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.2.0",
+    "@napi-rs/canvas": "^0.1.100",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.8.2"
+  }
+}
