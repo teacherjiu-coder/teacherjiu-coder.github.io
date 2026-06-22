@@ -1,17 +1,15 @@
 Validated 30 files
-Total issues: 4
+Total issues: 0
 
 
-## 1급 정기 (1gi) — 3 issues
-1gi_1#22	missing_image	img/1gi1_q22.png
-1gi_1#35	missing_image	img/1gi1_q35.png
-1gi_1#47	missing_image	img/1gi1_q47.png
+## 1급 정기 (1gi) — 0 issues
+(none)
 
 ## 1급 상시 (1ss) — 0 issues
 (none)
 
-## 2급 정기 (2gi) — 1 issues
-2gi_5#3	missing_image	img/gi5_q03.png
+## 2급 정기 (2gi) — 0 issues
+(none)
 
 ## 2급 상시 (2ss) — 0 issues
 (none)

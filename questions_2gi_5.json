@@ -43,7 +43,7 @@
     "answer": 3,
     "explanation": "오류 검사는 로컬 디스크에만 수행할 수 있으며, 네트워크 드라이브는 오류 검사가 불가능합니다.\n\n오류 검사 기능: 폴더/파일 오류 검사 및 복구, 불량 섹터 검출, 시스템 성능 향상 목적으로 정기 수행 권장",
     "point": "컴퓨터 일반",
-    "image": "img/gi5_q03.png",
+    "image": "img/2gi5_q03.png",
     "option_images": null,
     "explanation_image": null
   },
