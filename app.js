@@ -78,7 +78,11 @@ function showScreen(name) {
   Object.values(screens).forEach((el) => el.classList.remove("active"));
   screens[name].classList.add("active");
   if (name !== "quiz") document.body.classList.remove("is-exam-quiz");
-  $("#btn-access-code").classList.toggle("hidden", name !== "menu");
+  if (window.Capacitor?.getPlatform?.() === "ios") {
+    $("#btn-access-code").classList.add("hidden");
+  } else {
+    $("#btn-access-code").classList.toggle("hidden", name !== "menu");
+  }
 }
 
 function showLockToast() {
@@ -123,6 +127,10 @@ function selectGrade(grade) {
 }
 
 function updateAccessUI() {
+  if (window.Capacitor?.getPlatform?.() === "ios") {
+    $("#btn-access-code").classList.add("hidden");
+    return;
+  }
   const btn = $("#btn-access-code");
   if (isPro()) {
     btn.textContent = "🏅 Pro";
@@ -773,16 +781,15 @@ function renderOptions(q, answered, ans, isExam) {
       btn.textContent = opt;
     }
 
-    if (answered) {
+    if (answered && !isExam) {
       btn.disabled = true;
-      if (isExam) {
-        if (choice === ans.choice) btn.classList.add("selected-exam");
-      } else {
-        if (choice === ans.choice) btn.classList.add("selected");
-        if (choice === q.answer) btn.classList.add("correct");
-        else if (choice === ans.choice && !ans.correct) btn.classList.add("wrong");
-      }
+      if (choice === ans.choice) btn.classList.add("selected");
+      if (choice === q.answer) btn.classList.add("correct");
+      else if (choice === ans.choice && !ans.correct) btn.classList.add("wrong");
     } else {
+      if (answered && isExam && choice === ans.choice) {
+        btn.classList.add("selected-exam");
+      }
       btn.addEventListener("click", () => selectOption(choice));
     }
     optionsEl.appendChild(btn);
@@ -853,7 +860,7 @@ function renderQuiz() {
 
 function selectOption(choice) {
   const q = getCurrentQuestion();
-  if (session.answers[q.id]?.answered) return;
+  if (session.answers[q.id]?.answered && session.mode !== "exam") return;
 
   const isCorrect = choice === q.answer;
   session.answers[q.id] = { choice, correct: isCorrect, answered: true };

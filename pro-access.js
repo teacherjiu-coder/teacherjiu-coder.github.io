@@ -37,6 +37,8 @@ function unlockPro() {
 function isRoundUnlocked(type, num) {
   if (type !== "sangsi" && type !== "jeonggi") return false;
   if (num === 1) return true;
+  // iOS 출시용: App Store 3.1.1 정책상 코드 잠금 불가 → iOS만 전체 개방
+  if (window.Capacitor?.getPlatform?.() === "ios") return true;
   return isPro();
 }
 
