@@ -9,6 +9,7 @@ const COPY_FILES = [
   "index.html",
   "app.js",
   "style.css",
+  "native-touch.css",
   "links.js",
   "pro-access.js",
   "storage-bridge.js",
@@ -50,6 +51,14 @@ for (const file of COPY_FILES) {
   if (file === "index.html") {
     let html = fs.readFileSync(src, "utf8");
     html = html.replace('src="native.stub.js"', 'src="native.bundle.js"');
+    html = html.replace(
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />',
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />'
+    );
+    html = html.replace(
+      '<link rel="stylesheet" href="style.css" />',
+      '<link rel="stylesheet" href="style.css" />\n  <link rel="stylesheet" href="native-touch.css" />'
+    );
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.writeFileSync(dest, html);
   } else {

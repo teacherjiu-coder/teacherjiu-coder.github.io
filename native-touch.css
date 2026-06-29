@@ -1,0 +1,59 @@
+/**
+ * Capacitor 네이티브(iOS/Android) 전용 — www/에만 포함됨.
+ * 더블탭 줌·핀치 줌·가로 스크롤 방지.
+ */
+
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior-x: none;
+}
+
+button,
+input,
+select,
+textarea,
+a,
+.option-btn,
+.q-nav-btn,
+.round-btn,
+.btn-mode,
+.grade-card,
+.font-size-btn,
+.btn,
+.btn-nav,
+.btn-access-code,
+.btn-settings {
+  touch-action: manipulation;
+}
+
+/* iOS: 16px 미만 탭/포커스 시 자동 확대 방지 */
+.option-btn,
+.q-nav-btn,
+.round-btn,
+.btn-mode,
+.grade-card,
+.font-size-btn,
+.btn,
+.btn-nav,
+.btn-access-code,
+.btn-settings,
+.code-input,
+.notif-time-input {
+  font-size: max(1rem, 16px);
+}
+
+.option-btn-image .option-label {
+  font-size: max(0.95rem, 16px);
+}
+
+html[data-font-size="small"] .option-btn,
+html[data-font-size="small"] .q-nav-btn,
+html[data-font-size="small"] .round-btn,
+html[data-font-size="small"] .btn-mode {
+  font-size: 16px;
+}
