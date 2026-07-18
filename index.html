@@ -78,8 +78,8 @@
           </button>
         </div>
 
-        <!-- 앱 정식 출시 안내 배너 -->
-        <div class="app-notice-card">
+        <!-- 앱 정식 출시 안내 배너 (웹 전용 — 네이티브 앱에서는 숨김) -->
+        <div class="app-notice-card" data-platform="web">
           <h2 class="app-notice-title">📱 앱이 정식 출시됐어요!</h2>
           <p class="app-notice-desc">아이폰 · 아이패드는 앱스토어에서 '지우쌤' 검색 후 다운받으세요</p>
           <p class="app-notice-desc app-notice-android">🤖 안드로이드는 7/14 이후 출시 예정이에요!</p>
@@ -259,9 +259,9 @@
         <p class="result-score-line">점수: <strong id="result-score">0</strong>점 / 100점</p>
         <p class="result-passfail" id="result-passfail">합격</p>
         <div class="result-criteria">
-          <p class="criteria-heading">컴활 2급 합격 기준</p>
+          <p class="criteria-heading" id="result-criteria-heading">컴활 2급 합격 기준</p>
           <ul>
-            <li>1과목, 2과목 각각 40점 이상</li>
+            <li id="result-criteria-subjects">1과목, 2과목 각각 40점 이상</li>
             <li>전 과목 평균 60점 이상</li>
             <li>두 조건 모두 충족 시 합격</li>
           </ul>

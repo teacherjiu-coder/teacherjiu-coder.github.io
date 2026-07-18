@@ -201,7 +201,14 @@ function loadFontSize() {
 }
 
 function getSubject(id) {
-  return id <= 20 ? 1 : 2;
+  // 20문항 단위로 과목 분리
+  // 1급: 1~20(1과목), 21~40(2과목), 41~60(3과목)
+  // 2급: 1~20(1과목), 21~40(2과목)
+  return Math.floor((id - 1) / 20) + 1;
+}
+
+function getSubjectCount(grade) {
+  return grade === 1 ? 3 : 2;
 }
 
 function roundLabel(type, num) {
@@ -308,47 +315,46 @@ function clearProgress() {
   localStorage.removeItem(getProgressKey(grade, session.roundType, session.roundNum));
 }
 
-/** 지금까지 푼 문제만 채점 (100점 만점) */
+/** 지금까지 푼 문제만 채점 (총점·과목별 모두 100점 만점 환산) */
 function calcScores(questions, answers) {
-  let s1Correct = 0;
-  let s2Correct = 0;
+  const grade = session.grade || session.selectedRound?.grade || 2;
+  const subjectCount = getSubjectCount(grade);
+
+  const correct = new Array(subjectCount + 1).fill(0);
+  const total = new Array(subjectCount + 1).fill(0);
+  let totalCorrect = 0;
 
   questions.forEach((q) => {
+    const s = getSubject(q.id);
+    if (s < 1 || s > subjectCount) return;
+    total[s]++;
     const a = answers[q.id];
-    if (!a?.answered) return;
-    if (a.correct) {
-      if (getSubject(q.id) === 1) s1Correct++;
-      else s2Correct++;
-    }
+    if (!a?.answered || !a.correct) return;
+    totalCorrect++;
+    correct[s]++;
   });
 
-  const s1Score = s1Correct * 2.5;
-  const s2Score = s2Correct * 2.5;
-  const totalScore = s1Score + s2Score;
-  const s1Pass = s1Score >= 40;
-  const s2Pass = s2Score >= 40;
+  // 과목별 100점 만점 환산 (문항당 5점)
+  const subjectScores = [];
+  let allSubjectsPass = true;
+  for (let s = 1; s <= subjectCount; s++) {
+    const score = total[s] > 0 ? (correct[s] / total[s]) * 100 : 0;
+    subjectScores.push(score);
+    if (score < 40) allSubjectsPass = false;
+  }
+
+  // 총점(전 과목 평균) = 전체 정답률 100점 환산
+  const totalScore = questions.length > 0 ? (totalCorrect / questions.length) * 100 : 0;
   const avgPass = totalScore >= 60;
-  const passed = s1Pass && s2Pass && avgPass;
+  const passed = allSubjectsPass && avgPass;
 
-  return { s1Score, s2Score, totalScore, passed };
+  return { subjectScores, totalScore, passed };
 }
 
-/** 100점 만점 환산 점수 (세트 문항 수 기준) */
-function getScoreOn100(sc, questions) {
-  const maxScore = questions.length * 2.5;
-  if (maxScore <= 0) return 0;
-  return (sc.totalScore / maxScore) * 100;
-}
-
-/** 합격 판정: 100점 환산 60점 이상 (시험·일반·랜덤 공통) */
-function isResultPassed(sc, questions) {
-  return getScoreOn100(sc, questions) >= 60;
-}
-
-function renderPassFailResult(sc, questions) {
-  const passed = isResultPassed(sc, questions);
-  $("#result-passfail").textContent = passed ? "합격! 🎉" : "불합격 😢";
-  $("#result-passfail").className = `result-passfail ${passed ? "pass" : "fail"}`;
+/** 합격 판정: 각 과목 40점 이상 + 전 과목 평균 60점 이상 (과락 반영) */
+function renderPassFailResult(sc) {
+  $("#result-passfail").textContent = sc.passed ? "합격! 🎉" : "불합격 😢";
+  $("#result-passfail").className = `result-passfail ${sc.passed ? "pass" : "fail"}`;
 }
 
 const PASS_COUNT_BASE = 29600;
@@ -407,28 +413,28 @@ function getRoundKey(grade, type, num) {
   return `${grade}_${type}_${num}`;
 }
 
-function getPoolByType(grade, poolType) {
+function getPoolBySubject(grade, poolType) {
   const pool = questionPools[grade]?.[poolType] || {};
-  const computer = [];
-  const spreadsheet = [];
+  const subjectCount = getSubjectCount(grade);
+  const bySubject = Array.from({ length: subjectCount }, () => []);
 
   Object.values(pool).forEach((roundQs) => {
     roundQs.forEach((q) => {
-      if (q.id <= 20) computer.push(q);
-      else spreadsheet.push(q);
+      const s = getSubject(q.id);
+      if (s >= 1 && s <= subjectCount) bySubject[s - 1].push(q);
     });
   });
 
-  return { computer, spreadsheet };
+  return bySubject;
 }
 
 function buildRandomQuestions(grade, poolType) {
-  const { computer, spreadsheet } = getPoolByType(grade, poolType);
-  if (computer.length === 0 && spreadsheet.length === 0) return null;
+  const bySubject = getPoolBySubject(grade, poolType);
+  if (bySubject.every((arr) => arr.length === 0)) return null;
 
-  const picked1 = pickRandom(computer, 20);
-  const picked2 = pickRandom(spreadsheet, 20);
-  return shuffle([...picked1, ...picked2]);
+  // 과목별 20문항씩 추출 (1급 3과목=60, 2급 2과목=40)
+  const picked = bySubject.flatMap((arr) => pickRandom(arr, 20));
+  return shuffle(picked);
 }
 
 function buildRoundButtons(grade) {
@@ -812,7 +818,7 @@ function renderQuiz() {
   const ans = session.answers[q.id];
 
   $("#q-number").textContent = getQuestionTitle(q, idx, total);
-  $("#subject-tag").textContent = getSubject(q.id) === 1 ? "1과목" : "2과목";
+  $("#subject-tag").textContent = `${getSubject(q.id)}과목`;
   renderQuestionBody(q);
 
   renderQNav();
@@ -976,6 +982,13 @@ function finishQuiz(timeUp = false) {
 function showResult() {
   showScreen("result");
 
+  const grade = session.grade || session.selectedRound?.grade || 2;
+  $("#result-criteria-heading").textContent = `컴활 ${grade}급 합격 기준`;
+  $("#result-criteria-subjects").textContent =
+    grade === 1
+      ? "1과목, 2과목, 3과목 각각 40점 이상"
+      : "1과목, 2과목 각각 40점 이상";
+
   const sc = calcScores(session.questions, session.answers);
   const scoreText = Number.isInteger(sc.totalScore)
     ? sc.totalScore
@@ -984,7 +997,7 @@ function showResult() {
   $("#result-score").textContent = scoreText;
 
   if (session.mode === "exam" || session.mode === "normal" || session.mode === "random") {
-    renderPassFailResult(sc, session.questions);
+    renderPassFailResult(sc);
   } else {
     $("#result-passfail").textContent = sc.passed ? "합격" : "불합격";
     $("#result-passfail").className = `result-passfail ${sc.passed ? "pass" : "fail"}`;
@@ -1008,11 +1021,7 @@ function showResult() {
   );
 
   if (!isNativeApp()) {
-    const passed =
-      session.mode === "exam" || session.mode === "normal" || session.mode === "random"
-        ? isResultPassed(sc, session.questions)
-        : sc.passed;
-    updateResultPromoHeadline(passed);
+    updateResultPromoHeadline(sc.passed);
     updatePassCountDisplay();
   }
 }
