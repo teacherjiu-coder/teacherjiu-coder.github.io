@@ -53,18 +53,18 @@ body {
   color: var(--text);
   min-height: 100dvh;
   line-height: 1.6;
-  padding-top: env(safe-area-inset-top);
-  padding-right: env(safe-area-inset-right);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
 }
 
+/* safe-area 인셋은 앱 루트(#app) 한 곳에서만 적용 (중복 제거) */
 #app {
   max-width: 480px;
   margin: 0 auto;
   min-height: 100dvh;
   padding: 0.75rem;
-  padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
+  padding-top: calc(0.75rem + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  padding-left: calc(0.75rem + env(safe-area-inset-left, 0px));
+  padding-right: calc(0.75rem + env(safe-area-inset-right, 0px));
 }
 
 .screen {
@@ -440,7 +440,8 @@ body {
 /* 메인 메뉴 */
 .menu-header {
   text-align: center;
-  padding: 1rem 0 1.25rem;
+  /* 상단 3rem: 우상단 ⚙️ 고정 버튼(48px) 아래로 제목을 내려 겹침 방지 (가로 폭은 유지) */
+  padding: 3rem 0 1.25rem;
 }
 
 .grade-cards {
@@ -1620,9 +1621,46 @@ body.is-exam-quiz .btn-settings {
   font-weight: 700;
 }
 
+.result-subjects {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.result-subject {
+  background: var(--bg);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.result-subject strong {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.result-subject.failed {
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--wrong);
+}
+
+.result-subject.failed strong {
+  color: var(--wrong);
+}
+
 .result-passfail {
   font-size: 1.75rem;
   font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+
+.result-fail-reason {
+  font-size: 0.95rem;
+  color: var(--wrong);
+  margin-top: -0.75rem;
   margin-bottom: 1.25rem;
 }
 

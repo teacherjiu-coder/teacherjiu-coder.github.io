@@ -211,6 +211,19 @@ function getSubjectCount(grade) {
   return grade === 1 ? 3 : 2;
 }
 
+/**
+ * 답안 저장용 인스턴스 고유 키.
+ *  - 일반/시험: 한 회차 안에서 id가 고유 → q.id (기존 진행상황 저장 호환)
+ *  - 랜덤: 여러 회차를 섞어 뽑으므로 id가 겹칠 수 있음 → 빌드 시 부여한 answerKey
+ *  - 오답노트: 회차가 다르면 id가 겹칠 수 있음 → uid(roundKey_id)
+ * 같은 id를 가진 다른 문제의 정답이 미리 노출되는 문제를 방지한다.
+ */
+function answerKey(q) {
+  if (q.answerKey != null) return q.answerKey;
+  if (q.uid) return q.uid;
+  return String(q.id);
+}
+
 function roundLabel(type, num) {
   return `${type === "sangsi" ? "상시" : "정기"} ${num}회`;
 }
@@ -315,40 +328,52 @@ function clearProgress() {
   localStorage.removeItem(getProgressKey(grade, session.roundType, session.roundNum));
 }
 
-/** 지금까지 푼 문제만 채점 (총점·과목별 모두 100점 만점 환산) */
-function calcScores(questions, answers) {
-  const grade = session.grade || session.selectedRound?.grade || 2;
-  const subjectCount = getSubjectCount(grade);
-
+/**
+ * 급수별 채점 통합 함수.
+ *   - 과목 구성: 1급 3과목(1~20 / 21~40 / 41~60), 2급 2과목(1~20 / 21~40)
+ *   - 과목 점수 = 맞은 개수 × 5 (과목당 20문항, 0~100점)
+ *   - 총점 = 과목 점수의 평균 (소수점 1자리, 절대 100 초과 불가)
+ *   - 합격 = 모든 과목 40점 이상(과목당 8문제↑) AND 평균 60점 이상
+ * @param {number} level  급수 (1 | 2)
+ * @param {Object} answers  { [id]: { answered, correct, ... } } — 미응답은 오답 처리
+ */
+function calcScore(level, answers) {
+  const subjectCount = getSubjectCount(level); // 1급=3, 2급=2
   const correct = new Array(subjectCount + 1).fill(0);
-  const total = new Array(subjectCount + 1).fill(0);
-  let totalCorrect = 0;
 
-  questions.forEach((q) => {
-    const s = getSubject(q.id);
-    if (s < 1 || s > subjectCount) return;
-    total[s]++;
-    const a = answers[q.id];
+  Object.entries(answers || {}).forEach(([key, a]) => {
     if (!a?.answered || !a.correct) return;
-    totalCorrect++;
-    correct[s]++;
+    // 과목: 응답에 저장된 subject 우선(랜덤 모드 고유키 대응), 없으면 키(=id)에서 유도
+    const s = a.subject ?? getSubject(Number(a.id ?? key));
+    if (s >= 1 && s <= subjectCount) correct[s]++;
   });
 
-  // 과목별 100점 만점 환산 (문항당 5점)
   const subjectScores = [];
+  const failedSubjects = []; // 과락 과목 번호 (40점 미만)
   let allSubjectsPass = true;
   for (let s = 1; s <= subjectCount; s++) {
-    const score = total[s] > 0 ? (correct[s] / total[s]) * 100 : 0;
+    const score = Math.min(correct[s] * 5, 100); // 맞은 개수 × 5
     subjectScores.push(score);
-    if (score < 40) allSubjectsPass = false;
+    if (score < 40) {
+      allSubjectsPass = false;
+      failedSubjects.push(s);
+    }
   }
 
-  // 총점(전 과목 평균) = 전체 정답률 100점 환산
-  const totalScore = questions.length > 0 ? (totalCorrect / questions.length) * 100 : 0;
+  // 총점 = 과목 평균 (소수점 1자리, 100 초과 불가)
+  const rawAvg =
+    subjectScores.reduce((sum, v) => sum + v, 0) / subjectCount;
+  const totalScore = Math.min(Math.round(rawAvg * 10) / 10, 100);
   const avgPass = totalScore >= 60;
   const passed = allSubjectsPass && avgPass;
 
-  return { subjectScores, totalScore, passed };
+  return { level, subjectCount, subjectScores, totalScore, passed, failedSubjects };
+}
+
+/** 세션 컨텍스트에서 급수를 판별해 calcScore로 위임 (기존 호출부 호환) */
+function calcScores(questions, answers) {
+  const grade = session.grade || session.selectedRound?.grade || 2;
+  return calcScore(grade, answers);
 }
 
 /** 합격 판정: 각 과목 40점 이상 + 전 과목 평균 60점 이상 (과락 반영) */
@@ -433,7 +458,10 @@ function buildRandomQuestions(grade, poolType) {
   if (bySubject.every((arr) => arr.length === 0)) return null;
 
   // 과목별 20문항씩 추출 (1급 3과목=60, 2급 2과목=40)
-  const picked = bySubject.flatMap((arr) => pickRandom(arr, 20));
+  // 여러 회차에서 뽑으므로 원본 q.id가 겹칠 수 있음 → 인스턴스 고유 answerKey 부여
+  const picked = bySubject.flatMap((arr, sIdx) =>
+    pickRandom(arr, 20).map((q, i) => ({ ...q, answerKey: `rand_${sIdx + 1}_${i}_${q.id}` }))
+  );
   return shuffle(picked);
 }
 
@@ -688,7 +716,7 @@ function renderQNav() {
     }
     btn.dataset.index = String(idx);
 
-    const ans = session.answers[q.id];
+    const ans = session.answers[answerKey(q)];
     if (ans?.answered) {
       if (isExam) btn.classList.add("answered-neutral");
       else btn.classList.add(ans.correct ? "correct" : "wrong");
@@ -815,7 +843,7 @@ function renderQuiz() {
   const idx = session.currentIndex;
   const total = session.questions.length;
   const isExam = session.mode === "exam";
-  const ans = session.answers[q.id];
+  const ans = session.answers[answerKey(q)];
 
   $("#q-number").textContent = getQuestionTitle(q, idx, total);
   $("#subject-tag").textContent = `${getSubject(q.id)}과목`;
@@ -826,29 +854,37 @@ function renderQuiz() {
   const answered = !!ans?.answered;
   renderOptions(q, answered, ans, isExam);
 
-  $("#explanation-text").textContent = q.explanation;
-  renderExplanationImage(q);
-  const grade = q.grade ?? session.grade ?? session.selectedRound?.grade;
-  const roundType = q.roundType || session.roundType;
-  const hidePoint = grade === 2 && roundType === "jeonggi";
-  const showPoint = !hidePoint && q.point != null && String(q.point).trim() !== "";
-  const pointBlock = $("#point-block");
-  if (pointBlock) pointBlock.classList.toggle("hidden", !showPoint);
-  if (showPoint) $("#point-text").textContent = q.point;
-
   const feedbackArea = $("#feedback-area");
   const explainBtn = $("#btn-explain");
   const explainPanel = $("#explain-panel");
+  const pointBlock = $("#point-block");
 
+  // 해설을 화면에 노출할 수 있는 상태인지 (답을 고른 뒤 또는 오답노트 복습)
   const autoExplain =
     session.isWrongNote ||
     (answered && !isExam && (session.mode === "normal" || session.mode === "random"));
 
+  // 정답/해설 내용은 노출 가능한 상태일 때만 DOM에 채운다 (문제 전환 시 사전 노출 방지)
   if (autoExplain) {
+    $("#explanation-text").textContent = q.explanation;
+    renderExplanationImage(q);
+    const grade = q.grade ?? session.grade ?? session.selectedRound?.grade;
+    const roundType = q.roundType || session.roundType;
+    const hidePoint = grade === 2 && roundType === "jeonggi";
+    const showPoint = !hidePoint && q.point != null && String(q.point).trim() !== "";
+    if (pointBlock) pointBlock.classList.toggle("hidden", !showPoint);
+    if (showPoint) $("#point-text").textContent = q.point;
+
     feedbackArea.classList.remove("hidden");
     explainPanel.classList.remove("hidden");
     explainBtn.classList.add("hidden");
   } else {
+    // 아직 답을 고르지 않음 → 해설/정답 흔적을 모두 비우고 감춘다
+    $("#explanation-text").textContent = "";
+    renderExplanationImage({});
+    $("#point-text").textContent = "";
+    if (pointBlock) pointBlock.classList.add("hidden");
+
     feedbackArea.classList.add("hidden");
     explainPanel.classList.add("hidden");
     explainBtn.classList.remove("hidden");
@@ -866,10 +902,15 @@ function renderQuiz() {
 
 function selectOption(choice) {
   const q = getCurrentQuestion();
-  if (session.answers[q.id]?.answered && session.mode !== "exam") return;
+  if (session.answers[answerKey(q)]?.answered && session.mode !== "exam") return;
 
   const isCorrect = choice === q.answer;
-  session.answers[q.id] = { choice, correct: isCorrect, answered: true };
+  session.answers[answerKey(q)] = {
+    choice,
+    correct: isCorrect,
+    answered: true,
+    subject: getSubject(q.id),
+  };
 
   if (!isCorrect && !session.isWrongNote && session.mode !== "exam") {
     const roundKey = q.roundKey || getSessionRoundKey();
@@ -996,11 +1037,39 @@ function showResult() {
 
   $("#result-score").textContent = scoreText;
 
+  // 과목별 점수 (1급 3개 / 2급 2개) + 과락 표시
+  const subjectsEl = $("#result-subjects");
+  if (subjectsEl) {
+    subjectsEl.innerHTML = sc.subjectScores
+      .map((v, i) => {
+        const failed = sc.failedSubjects.includes(i + 1);
+        return `<span class="result-subject${failed ? " failed" : ""}">${i + 1}과목 <strong>${v}</strong>점${failed ? " · 과락" : ""}</span>`;
+      })
+      .join("");
+  }
+
   if (session.mode === "exam" || session.mode === "normal" || session.mode === "random") {
     renderPassFailResult(sc);
   } else {
     $("#result-passfail").textContent = sc.passed ? "합격" : "불합격";
     $("#result-passfail").className = `result-passfail ${sc.passed ? "pass" : "fail"}`;
+  }
+
+  // 불합격 사유(과락 과목 / 평균 미달) 안내
+  const failReasonEl = $("#result-fail-reason");
+  if (failReasonEl) {
+    if (sc.passed) {
+      failReasonEl.classList.add("hidden");
+      failReasonEl.textContent = "";
+    } else {
+      const reasons = [];
+      if (sc.failedSubjects.length) {
+        reasons.push(`${sc.failedSubjects.map((s) => `${s}과목`).join(", ")} 과락(40점 미만)`);
+      }
+      if (sc.totalScore < 60) reasons.push("평균 60점 미만");
+      failReasonEl.textContent = reasons.length ? `불합격 사유: ${reasons.join(" · ")}` : "";
+      failReasonEl.classList.toggle("hidden", reasons.length === 0);
+    }
   }
 
   const timeEl = $("#result-time");
@@ -1012,7 +1081,7 @@ function showResult() {
   }
 
   const examWrongCount = session.questions.filter((q) => {
-    const a = session.answers[q.id];
+    const a = session.answers[answerKey(q)];
     return a?.answered && !a.correct;
   }).length;
   $("#btn-save-wrongnote").classList.toggle(
@@ -1028,7 +1097,7 @@ function showResult() {
 
 function saveExamWrongToNoteAndGo() {
   session.questions.forEach((q) => {
-    const a = session.answers[q.id];
+    const a = session.answers[answerKey(q)];
     if (a?.answered && !a.correct) {
       const grade = q.grade || session.grade || session.selectedRound?.grade;
       const roundKey = q.roundKey || getRoundKey(grade, session.roundType, session.roundNum);
